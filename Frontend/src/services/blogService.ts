@@ -32,70 +32,59 @@ function slugify(value: string): string {
     .replace(/^-|-$/g, '');
 }
 
-// Fallback initial posts si hay algún problema de red
+// Noticias oficiales por defecto de Aura Corporativa (Tercerización, Planillas y Outsourcing)
 const defaultPosts: BlogPost[] = [
   {
-    id: 1,
-    title: 'El impacto del nuevo valor de la UIT en su planilla y las multas de SUNAFIL',
-    date: '07 Feb, 2026',
+    id: 5,
+    title: 'Tercerización de Personal en Perú: Claves y normativa legal para 2026',
+    date: '10 Oct, 2026',
     category: 'Laboral',
-    desc: 'Con el inicio del año fiscal y la actualización del valor de la Unidad Impositiva Tributaria (UIT), las reglas de juego cambian tanto para las escalas salariales, retenciones de quinta categoría y las sanciones aplicadas por SUNAFIL.',
-    image: 'Sunafil.webp',
-    slug: 'el-impacto-del-nuevo-valor-de-la-uit-en-su-planilla-y-las-multas-de-sunafil',
-    excerpt: 'Con el inicio del año fiscal y la actualización del valor de la Unidad Impositiva Tributaria (UIT), las reglas de juego cambian tanto para las escalas salariales, retenciones de quinta categoría y las sanciones aplicadas por SUNAFIL.',
-    content: 'Con el inicio del año fiscal y la actualización del valor de la Unidad Impositiva Tributaria (UIT), las reglas de juego cambian tanto para las escalas salariales, retenciones de quinta categoría y las sanciones aplicadas por SUNAFIL.',
-    image_url: '/assets/images/blog/Sunafil.webp',
+    desc: 'Conozca los requisitos esenciales, responsabilidades solidarias y mejores prácticas para contratar personal tercerizado sin contingencias laborales ante SUNAFIL.',
+    image: 'tercerizacion_personal.png',
+    empresa: 'aura',
+    slug: 'tercerizacion-de-personal-en-peru-claves-y-normativa-legal-para-2026',
+    excerpt: 'Conozca los requisitos esenciales, responsabilidades solidarias y mejores prácticas para contratar personal tercerizado sin contingencias laborales ante SUNAFIL.',
+    content: 'Conozca los requisitos esenciales, responsabilidades solidarias y mejores prácticas para contratar personal tercerizado sin contingencias laborales ante SUNAFIL.',
+    image_url: '/assets/images/blog/tercerizacion_personal.png',
     published: true,
-    published_at: '2026-02-07',
+    published_at: '2026-10-10',
   },
   {
-    id: 2,
-    title: 'Más allá de la supervivencia: 5 Estrategias para blindar el Flujo de Caja este año',
-    date: '07 Feb, 2026',
+    id: 6,
+    title: 'Gestión de Planillas y Payroll: Cómo evitar errores en el cálculo de beneficios',
+    date: '08 Oct, 2026',
     category: 'Finanzas',
-    desc: 'En un entorno económico volátil, el efectivo es el rey. Muchas empresas peruanas rentables quiebran no por falta de ventas, sino por falta de liquidez en los momentos clave.',
-    image: 'Caja.webp',
-    slug: 'mas-alla-de-la-supervivencia-5-estrategias-para-blindar-el-flujo-de-caja-este-ano',
-    excerpt: 'En un entorno económico volátil, el efectivo es el rey. Muchas empresas peruanas rentables quiebran no por falta de ventas, sino por falta de liquidez en los momentos clave.',
-    content: 'En un entorno económico volátil, el efectivo es el rey. Muchas empresas peruanas rentables quiebran no por falta de ventas, sino por falta de liquidez en los momentos clave.',
-    image_url: '/assets/images/blog/Caja.webp',
+    desc: 'El procesamiento puntual y exacto de haberes, gratificaciones, CTS y retenciones tributarias (PLAME) es indispensable para la seguridad laboral de su empresa.',
+    image: 'administracion_planillas.png',
+    empresa: 'aura',
+    slug: 'gestion-de-planillas-y-payroll-como-evitar-errores-en-el-calculo-de-beneficios',
+    excerpt: 'El procesamiento puntual y exacto de haberes, gratificaciones, CTS y retenciones tributarias (PLAME) es indispensable para la seguridad laboral de su empresa.',
+    content: 'El procesamiento puntual y exacto de haberes, gratificaciones, CTS y retenciones tributarias (PLAME) es indispensable para la seguridad laboral de su empresa.',
+    image_url: '/assets/images/blog/administracion_planillas.png',
     published: true,
-    published_at: '2026-02-07',
+    published_at: '2026-10-08',
   },
   {
-    id: 3,
-    title: 'El Desafío del SIRE: Por qué no debes aceptar la «Propuesta Automática» de SUNAT sin revisar',
-    date: '07 Feb, 2026',
-    category: 'Tributario',
-    desc: 'La implementación del Sistema Integrado de Registros Electrónicos (SIRE) exige que las empresas comparen minuciosamente sus comprobantes físicos y electrónicos antes de aceptar cualquier propuesta.',
-    image: 'SIS.webp',
-    slug: 'el-desafio-del-sire-por-que-no-debes-aceptar-la-propuesta-automatica-de-sunat-sin-revisar',
-    excerpt: 'La implementación del Sistema Integrado de Registros Electrónicos (SIRE) exige que las empresas comparen minuciosamente sus comprobantes físicos y electrónicos antes de aceptar cualquier propuesta.',
-    content: 'La implementación del Sistema Integrado de Registros Electrónicos (SIRE) exige que las empresas comparen minuciosamente sus comprobantes físicos y electrónicos antes de aceptar cualquier propuesta.',
-    image_url: '/assets/images/blog/SIS.webp',
-    published: true,
-    published_at: '2026-02-07',
-  },
-  {
-    id: 4,
-    title: 'Declaración Anual del Impuesto a la Renta: Cómo afrontar el cierre fiscal sin contingencias',
-    date: '31 Ene, 2026',
+    id: 7,
+    title: 'Outsourcing y Soporte Administrativo: Eficiencia operativa para su empresa',
+    date: '05 Oct, 2026',
     category: 'Contabilidad',
-    desc: 'La campaña de la Declaración Jurada Anual del Impuesto a la Renta es el hito más crítico para cualquier empresa. Conoce los gastos deducibles y cómo evitar observaciones.',
-    image: 'Noticia1.webp',
-    slug: 'declaracion-anual-del-impuesto-a-la-renta-como-afrontar-el-cierre-fiscal-sin-contingencias',
-    excerpt: 'La campaña de la Declaración Jurada Anual del Impuesto a la Renta es el hito más crítico para cualquier empresa. Conoce los gastos deducibles y cómo evitar observaciones.',
-    content: 'La campaña de la Declaración Jurada Anual del Impuesto a la Renta es el hito más crítico para cualquier empresa. Conoce los gastos deducibles y cómo evitar observaciones.',
-    image_url: '/assets/images/blog/Noticia1.webp',
+    desc: 'Delegar el soporte administrativo y la gestión operativa permite a las organizaciones concentrarse al 100% en el crecimiento y rentabilidad de su negocio principal.',
+    image: 'soporte_administrativo.png',
+    empresa: 'aura',
+    slug: 'outsourcing-y-soporte-administrativo-eficiencia-operativa-para-su-empresa',
+    excerpt: 'Delegar el soporte administrativo y la gestión operativa permite a las organizaciones concentrarse al 100% en el crecimiento y rentabilidad de su negocio principal.',
+    content: 'Delegar el soporte administrativo y la gestión operativa permite a las organizaciones concentrarse al 100% en el crecimiento y rentabilidad de su negocio principal.',
+    image_url: '/assets/images/blog/soporte_administrativo.png',
     published: true,
-    published_at: '2026-01-31',
+    published_at: '2026-10-05',
   },
 ];
 
 function normalizePost(row: any): BlogPost {
   const title = row.title || '';
   const desc = row.desc || row.excerpt || row.content || '';
-  const image = row.image || row.image_url || 'Noticia1.webp';
+  const image = row.image || row.image_url || 'tercerizacion_personal.png';
   const postSlug = row.slug || slugify(title);
   const imageUrl = blogService.getImageUrl(image);
 
@@ -106,6 +95,7 @@ function normalizePost(row: any): BlogPost {
     date: row.date || (row.created_at ? new Date(row.created_at).toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Reciente'),
     desc,
     image,
+    empresa: row.empresa || 'aura',
     link: row.link || null,
     slug: postSlug,
     excerpt: desc,
@@ -120,7 +110,7 @@ function normalizePost(row: any): BlogPost {
 
 export const blogService = {
   getImageUrl(image?: string | null): string {
-    if (!image) return '/assets/images/blog/Noticia1.webp';
+    if (!image) return '/assets/images/blog/tercerizacion_personal.png';
     if (image.startsWith('http://') || image.startsWith('https://') || image.startsWith('data:')) {
       return image;
     }
@@ -151,13 +141,15 @@ export const blogService = {
 
   async getPublishedPosts(): Promise<BlogPost[]> {
     try {
+      // Filtrar estrictamente por empresa = 'aura'
       const { data, error } = await supabase
         .from('posts')
         .select('*')
+        .eq('empresa', 'aura')
         .order('id', { ascending: false });
 
       if (error) {
-        console.warn('Error consultando Supabase posts, usando fallback:', error.message);
+        console.warn('Error consultando Supabase posts de Aura, usando fallback:', error.message);
         return defaultPosts;
       }
 
@@ -182,7 +174,6 @@ export const blogService = {
   },
 
   async login(password: string): Promise<{ token: string; user: BlogAdminUser }> {
-    // Acepta clave configurada para el panel (aura2026, zwe2026 o similar)
     const normalized = password.trim();
     if (normalized === ADMIN_PIN || normalized === 'zwe2026' || normalized === 'aura' || normalized === 'admin1234') {
       const user: BlogAdminUser = {
@@ -194,7 +185,7 @@ export const blogService = {
       return { token, user };
     }
 
-    // Si hay backend API disponible, intentamos como fallback
+    // Fallback a API Laravel si estuviera configurada
     try {
       const apiBase = import.meta.env.VITE_API_BASE_URL || 'https://aura-api-production-75ca.up.railway.app/api';
       const response = await fetch(`${apiBase}/admin/login`, {
@@ -233,8 +224,9 @@ export const blogService = {
       category: payload.category,
       date: payload.date.trim(),
       desc: payload.desc.trim(),
-      image: payload.image.trim() || 'Noticia1.webp',
+      image: payload.image.trim() || 'tercerizacion_personal.png',
       link: payload.link?.trim() || null,
+      empresa: 'aura',
     };
 
     const { data, error } = await supabase
@@ -256,8 +248,9 @@ export const blogService = {
       category: payload.category,
       date: payload.date.trim(),
       desc: payload.desc.trim(),
-      image: payload.image.trim() || 'Noticia1.webp',
+      image: payload.image.trim() || 'tercerizacion_personal.png',
       link: payload.link?.trim() || null,
+      empresa: 'aura',
     };
 
     const { data, error } = await supabase

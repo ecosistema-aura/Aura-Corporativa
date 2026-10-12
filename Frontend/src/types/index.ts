@@ -58,6 +58,7 @@ export interface BlogPost {
   date: string;
   desc: string;
   image: string;
+  empresa?: string;
   link?: string | null;
   slug?: string;
   excerpt?: string;
@@ -75,6 +76,7 @@ export interface BlogPostPayload {
   date: string;
   desc: string;
   image: string;
+  empresa?: string;
   link?: string | null;
   slug?: string;
   excerpt?: string;
