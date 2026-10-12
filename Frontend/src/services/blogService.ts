@@ -32,54 +32,8 @@ function slugify(value: string): string {
     .replace(/^-|-$/g, '');
 }
 
-// Noticias oficiales por defecto de Aura Corporativa (Tercerización, Planillas y Outsourcing)
-const defaultPosts: BlogPost[] = [
-  {
-    id: 5,
-    title: 'Tercerización de Personal en Perú: Claves y normativa legal para 2026',
-    date: '10 Oct, 2026',
-    category: 'Laboral',
-    desc: 'Conozca los requisitos esenciales, responsabilidades solidarias y mejores prácticas para contratar personal tercerizado sin contingencias laborales ante SUNAFIL.',
-    image: 'tercerizacion_personal.png',
-    empresa: 'aura',
-    slug: 'tercerizacion-de-personal-en-peru-claves-y-normativa-legal-para-2026',
-    excerpt: 'Conozca los requisitos esenciales, responsabilidades solidarias y mejores prácticas para contratar personal tercerizado sin contingencias laborales ante SUNAFIL.',
-    content: 'Conozca los requisitos esenciales, responsabilidades solidarias y mejores prácticas para contratar personal tercerizado sin contingencias laborales ante SUNAFIL.',
-    image_url: '/assets/images/blog/tercerizacion_personal.png',
-    published: true,
-    published_at: '2026-10-10',
-  },
-  {
-    id: 6,
-    title: 'Gestión de Planillas y Payroll: Cómo evitar errores en el cálculo de beneficios',
-    date: '08 Oct, 2026',
-    category: 'Finanzas',
-    desc: 'El procesamiento puntual y exacto de haberes, gratificaciones, CTS y retenciones tributarias (PLAME) es indispensable para la seguridad laboral de su empresa.',
-    image: 'administracion_planillas.png',
-    empresa: 'aura',
-    slug: 'gestion-de-planillas-y-payroll-como-evitar-errores-en-el-calculo-de-beneficios',
-    excerpt: 'El procesamiento puntual y exacto de haberes, gratificaciones, CTS y retenciones tributarias (PLAME) es indispensable para la seguridad laboral de su empresa.',
-    content: 'El procesamiento puntual y exacto de haberes, gratificaciones, CTS y retenciones tributarias (PLAME) es indispensable para la seguridad laboral de su empresa.',
-    image_url: '/assets/images/blog/administracion_planillas.png',
-    published: true,
-    published_at: '2026-10-08',
-  },
-  {
-    id: 7,
-    title: 'Outsourcing y Soporte Administrativo: Eficiencia operativa para su empresa',
-    date: '05 Oct, 2026',
-    category: 'Contabilidad',
-    desc: 'Delegar el soporte administrativo y la gestión operativa permite a las organizaciones concentrarse al 100% en el crecimiento y rentabilidad de su negocio principal.',
-    image: 'soporte_administrativo.png',
-    empresa: 'aura',
-    slug: 'outsourcing-y-soporte-administrativo-eficiencia-operativa-para-su-empresa',
-    excerpt: 'Delegar el soporte administrativo y la gestión operativa permite a las organizaciones concentrarse al 100% en el crecimiento y rentabilidad de su negocio principal.',
-    content: 'Delegar el soporte administrativo y la gestión operativa permite a las organizaciones concentrarse al 100% en el crecimiento y rentabilidad de su negocio principal.',
-    image_url: '/assets/images/blog/soporte_administrativo.png',
-    published: true,
-    published_at: '2026-10-05',
-  },
-];
+// Por defecto Aura inicia completamente limpio (sin noticias de ZWE)
+const defaultPosts: BlogPost[] = [];
 
 function normalizePost(row: any): BlogPost {
   const title = row.title || '';
