@@ -54,24 +54,33 @@ export type BlogCategory = 'Laboral' | 'Finanzas' | 'Tributario' | 'Contabilidad
 export interface BlogPost {
   id: number;
   title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  image_url: string | null;
   category: BlogCategory;
-  published: boolean;
-  published_at: string | null;
-  created_at: string;
-  updated_at: string;
+  date: string;
+  desc: string;
+  image: string;
+  link?: string | null;
+  slug?: string;
+  excerpt?: string;
+  content?: string;
+  image_url?: string | null;
+  published?: boolean;
+  published_at?: string | null;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface BlogPostPayload {
   title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  image_url: string | null;
   category: BlogCategory;
-  published: boolean;
-  published_at: string | null;
+  date: string;
+  desc: string;
+  image: string;
+  link?: string | null;
+  slug?: string;
+  excerpt?: string;
+  content?: string;
+  image_url?: string | null;
+  published?: boolean;
+  published_at?: string | null;
 }
+

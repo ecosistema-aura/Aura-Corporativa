@@ -1,17 +1,21 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from 'react';
 import {
   CalendarDays,
   CheckCircle2,
   ExternalLink,
   FileText,
+  Link as LinkIcon,
   LoaderCircle,
   LogIn,
   LogOut,
   Pencil,
   Plus,
+  RefreshCw,
   Search,
   Trash2,
+  UploadCloud,
   X,
+  AlertTriangle,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import logoAura from '../assets/logo_aura_mini.jpg';
@@ -21,68 +25,95 @@ import {
   blogService,
   type BlogAdminUser,
 } from '../services/blogService';
-import type { BlogCategory, BlogPost, BlogPostPayload } from '../types';
+import type { BlogCategory, BlogPost } from '../types';
 
 const categories: BlogCategory[] = ['Laboral', 'Finanzas', 'Tributario', 'Contabilidad'];
 
-function emptyPost(): BlogPostPayload {
+function getTodayFormatted(): string {
+  const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Set', 'Oct', 'Nov', 'Dic'];
+  const now = new Date();
+  const day = String(now.getDate()).padStart(2, '0');
+  const month = meses[now.getMonth()];
+  const year = now.getFullYear();
+  return `${day} ${month}, ${year}`;
+}
+
+interface PostFormData {
+  id?: number;
+  title: string;
+  category: BlogCategory;
+  date: string;
+  desc: string;
+  image: string;
+  link: string;
+}
+
+function emptyForm(): PostFormData {
   return {
     title: '',
-    slug: '',
-    excerpt: '',
-    content: '',
-    image_url: null,
     category: 'Laboral',
-    published: false,
-    published_at: new Date().toISOString().slice(0, 10),
+    date: getTodayFormatted(),
+    desc: '',
+    image: '',
+    link: '',
   };
-}
-
-function slugify(value: string): string {
-  return value
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-}
-
-function displayDate(value: string | null): string {
-  if (!value) return 'Borrador';
-
-  return new Intl.DateTimeFormat('es-PE', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
-  }).format(new Date(value));
 }
 
 export function BlogAdminPage() {
   const [token, setToken] = useState(() => sessionStorage.getItem(BLOG_ADMIN_TOKEN_KEY));
   const [admin, setAdmin] = useState<BlogAdminUser | null>(null);
-  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [status, setStatus] = useState<'checking' | 'signedOut' | 'signedIn'>(() =>
     sessionStorage.getItem(BLOG_ADMIN_TOKEN_KEY) ? 'checking' : 'signedOut',
   );
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+
+  // Lista de noticias y estado
+  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [search, setSearch] = useState('');
-  const [activeCategory, setActiveCategory] = useState('Todas');
-  const [isEditorOpen, setIsEditorOpen] = useState(false);
-  const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
-  const [postForm, setPostForm] = useState<BlogPostPayload>(emptyPost);
-  const [slugIsManual, setSlugIsManual] = useState(false);
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('Todas');
+
+  // Mensajes de feedback
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
+
+  // Modal Crear / Editar Noticia
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [postForm, setPostForm] = useState<PostFormData>(emptyForm);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
+  // Modal Confirmar Eliminación
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [postToDelete, setPostToDelete] = useState<BlogPost | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    setToastMessage(message);
+    setToastType(type);
+    setTimeout(() => {
+      setToastMessage('');
+    }, 4000);
+  };
+
+  const loadPosts = async () => {
+    setIsLoadingPosts(true);
+    try {
+      const data = await blogService.getPublishedPosts();
+      setPosts(data);
+    } catch (err: any) {
+      showToast('Error al cargar noticias: ' + (err.message || 'Error desconocido'), 'error');
+    } finally {
+      setIsLoadingPosts(false);
+    }
+  };
 
   useEffect(() => {
-    if (!token) {
-      return;
-    }
+    if (!token) return;
 
     let isMounted = true;
     blogService.getAdminUser(token)
@@ -90,15 +121,13 @@ export function BlogAdminPage() {
         if (!isMounted) return;
         setAdmin(user);
         setStatus('signedIn');
-        setIsLoadingPosts(true);
-        return blogService.getAdminPosts(token);
+        return blogService.getPublishedPosts();
       })
       .then((data) => {
         if (isMounted && data) setPosts(data);
       })
       .catch((requestError: unknown) => {
         if (!isMounted) return;
-
         if (requestError instanceof BlogApiError && [401, 403].includes(requestError.status)) {
           sessionStorage.removeItem(BLOG_ADMIN_TOKEN_KEY);
           setToken(null);
@@ -106,13 +135,7 @@ export function BlogAdminPage() {
         } else {
           setStatus('signedOut');
         }
-
-        setError(requestError instanceof Error
-          ? requestError.message
-          : 'No se pudo verificar la sesión.');
-      })
-      .finally(() => {
-        if (isMounted) setIsLoadingPosts(false);
+        showToast('No se pudo verificar la sesión.', 'error');
       });
 
     return () => {
@@ -120,49 +143,25 @@ export function BlogAdminPage() {
     };
   }, [token]);
 
-  const visiblePosts = useMemo(() => {
-    const normalizedSearch = search.trim().toLocaleLowerCase('es');
+  const filteredPosts = useMemo(() => {
+    const normalizedSearch = search.trim().toLowerCase();
 
     return posts.filter((post) => {
-      const matchesCategory = activeCategory === 'Todas' || post.category === activeCategory;
-      const matchesSearch = !normalizedSearch ||
-        `${post.title} ${post.excerpt} ${post.content}`.toLocaleLowerCase('es').includes(normalizedSearch);
+      const matchesCategory =
+        selectedCategoryFilter === 'Todas' ||
+        post.category.toLowerCase() === selectedCategoryFilter.toLowerCase();
+      const matchesSearch =
+        !normalizedSearch ||
+        post.title.toLowerCase().includes(normalizedSearch) ||
+        post.desc.toLowerCase().includes(normalizedSearch);
 
       return matchesCategory && matchesSearch;
     });
-  }, [activeCategory, posts, search]);
-
-  const openNewPostForm = () => {
-    setEditingPost(null);
-    setPostForm(emptyPost());
-    setSlugIsManual(false);
-    setError('');
-    setSuccess('');
-    setIsEditorOpen(true);
-  };
-
-  const openEditPostForm = (post: BlogPost) => {
-    setEditingPost(post);
-    setSlugIsManual(true);
-    setPostForm({
-      title: post.title,
-      slug: post.slug,
-      excerpt: post.excerpt,
-      content: post.content,
-      image_url: post.image_url,
-      category: post.category,
-      published: post.published,
-      published_at: post.published_at?.slice(0, 10) ?? new Date().toISOString().slice(0, 10),
-    });
-    setError('');
-    setSuccess('');
-    setIsEditorOpen(true);
-  };
+  }, [posts, search, selectedCategoryFilter]);
 
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
-    setError('');
 
     try {
       const result = await blogService.login(password);
@@ -171,88 +170,158 @@ export function BlogAdminPage() {
       setAdmin(result.user);
       setStatus('signedIn');
       setPassword('');
-      setIsLoadingPosts(true);
-      setPosts(await blogService.getAdminPosts(result.token));
+      showToast('¡Bienvenido al Panel de Noticias!', 'success');
+      await loadPosts();
     } catch (requestError) {
-      setError(requestError instanceof Error
-        ? requestError.message
-        : 'No se pudo iniciar sesión.');
+      showToast(
+        requestError instanceof Error ? requestError.message : 'No se pudo iniciar sesión.',
+        'error',
+      );
     } finally {
       setIsSubmitting(false);
-      setIsLoadingPosts(false);
     }
   };
 
   const handleLogout = async () => {
-    if (!token) return;
+    if (token) {
+      try {
+        await blogService.logout(token);
+      } catch {
+        // Ignorar error al cerrar sesión
+      }
+    }
+    sessionStorage.removeItem(BLOG_ADMIN_TOKEN_KEY);
+    setToken(null);
+    setAdmin(null);
+    setPosts([]);
+    setStatus('signedOut');
+  };
 
-    setError('');
-    try {
-      await blogService.logout(token);
-    } catch (requestError) {
-      setError(requestError instanceof Error
-        ? `La sesión local se cerró, pero no se pudo confirmar en el servidor: ${requestError.message}`
-        : 'No se pudo confirmar el cierre de sesión en el servidor.');
-    } finally {
-      sessionStorage.removeItem(BLOG_ADMIN_TOKEN_KEY);
-      setToken(null);
-      setAdmin(null);
-      setPosts([]);
-      setStatus('signedOut');
+  // Abrir Modal de Creación
+  const openCreateModal = () => {
+    setIsEditing(false);
+    setPostForm(emptyForm());
+    setSelectedFile(null);
+    setImagePreview(null);
+    setIsModalOpen(true);
+  };
+
+  // Abrir Modal de Edición
+  const openEditModal = (post: BlogPost) => {
+    setIsEditing(true);
+    setPostForm({
+      id: post.id,
+      title: post.title,
+      category: (post.category as BlogCategory) || 'Laboral',
+      date: post.date || getTodayFormatted(),
+      desc: post.desc,
+      image: post.image || '',
+      link: post.link || '',
+    });
+    setSelectedFile(null);
+    setImagePreview(blogService.getImageUrl(post.image));
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    if (isSaving) return;
+    setIsModalOpen(false);
+    setSelectedFile(null);
+    setImagePreview(null);
+  };
+
+  // Manejo de Selección de Archivo de Imagen
+  const handleFileSelected = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
+  // Guardar Noticia (Crear o Actualizar)
   const handleSavePost = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!token) return;
 
-    setIsSaving(true);
-    setError('');
-    setSuccess('');
-
-    const payload = {
-      ...postForm,
-      image_url: postForm.image_url?.trim() || null,
-      published_at: postForm.published ? postForm.published_at : null,
-    };
-
-    try {
-      if (editingPost) {
-        const updatedPost = await blogService.updatePost(token, editingPost.id, payload);
-        setPosts((current) => current.map((post) => post.id === updatedPost.id ? updatedPost : post));
-        setSuccess('La noticia se actualizó correctamente.');
-      } else {
-        const createdPost = await blogService.createPost(token, payload);
-        setPosts((current) => [createdPost, ...current]);
-        setSuccess('La noticia se creó correctamente.');
-      }
-
-      setIsEditorOpen(false);
-      setEditingPost(null);
-    } catch (requestError) {
-      setError(requestError instanceof Error
-        ? requestError.message
-        : 'No se pudo guardar la noticia.');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleDeletePost = async (post: BlogPost) => {
-    if (!token || !window.confirm(`¿Eliminar la noticia "${post.title}"? Esta acción no se puede deshacer.`)) {
+    if (!postForm.title.trim() || !postForm.desc.trim() || !postForm.category) {
+      showToast('Por favor completa todos los campos requeridos.', 'error');
       return;
     }
 
-    setError('');
-    setSuccess('');
+    setIsSaving(true);
+
     try {
-      await blogService.deletePost(token, post.id);
-      setPosts((current) => current.filter((item) => item.id !== post.id));
-      setSuccess('La noticia se eliminó correctamente.');
-    } catch (requestError) {
-      setError(requestError instanceof Error
-        ? requestError.message
-        : 'No se pudo eliminar la noticia.');
+      let finalImageUrl = postForm.image;
+
+      // Si subió un archivo nuevo, subir al bucket 'blog-images' de Supabase Storage
+      if (selectedFile) {
+        setIsUploading(true);
+        finalImageUrl = await blogService.uploadImage(selectedFile);
+        setIsUploading(false);
+      }
+
+      // Si no tiene imagen, asignar la imagen por defecto
+      if (!finalImageUrl) {
+        finalImageUrl = 'Noticia1.webp';
+      }
+
+      const payload = {
+        title: postForm.title.trim(),
+        category: postForm.category,
+        date: postForm.date.trim() || getTodayFormatted(),
+        desc: postForm.desc.trim(),
+        image: finalImageUrl,
+        link: postForm.link.trim() || undefined,
+      };
+
+      if (isEditing && postForm.id) {
+        await blogService.updatePost(token, postForm.id, payload);
+        showToast('¡Noticia actualizada exitosamente!', 'success');
+      } else {
+        await blogService.createPost(token, payload);
+        showToast('¡Nueva noticia publicada con éxito!', 'success');
+      }
+
+      closeModal();
+      await loadPosts();
+    } catch (err: any) {
+      showToast('Error al guardar: ' + (err.message || 'Error desconocido'), 'error');
+    } finally {
+      setIsSaving(false);
+      setIsUploading(false);
+    }
+  };
+
+  // Confirmar Eliminación
+  const openDeleteModal = (post: BlogPost) => {
+    setPostToDelete(post);
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    if (isDeleting) return;
+    setIsDeleteModalOpen(false);
+    setPostToDelete(null);
+  };
+
+  const handleDeletePost = async () => {
+    if (!postToDelete || !token) return;
+
+    setIsDeleting(true);
+    try {
+      await blogService.deletePost(token, postToDelete.id);
+      showToast('Noticia eliminada correctamente.', 'success');
+      closeDeleteModal();
+      await loadPosts();
+    } catch (err: any) {
+      showToast('Error al eliminar: ' + (err.message || 'Error desconocido'), 'error');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -267,15 +336,18 @@ export function BlogAdminPage() {
     );
   }
 
+  // Pantalla de Login de Administrador
   if (status === 'signedOut') {
     return (
-      <main className="flex grow items-center justify-center bg-gradient-to-br from-[#0B192C] to-slate-800 px-4 py-16">
+      <main className="flex grow items-center justify-center bg-gradient-to-br from-[#0B192C] to-slate-900 px-4 py-16">
         <section className="w-full max-w-md rounded-2xl border-t-4 border-[#DC2626] bg-white p-7 shadow-2xl sm:p-9">
-          <img
-            src={logoAura}
-            alt="Aura Corporativa"
-            className="h-14 w-14 rounded object-contain"
-          />
+          <div className="flex items-center justify-center">
+            <img
+              src={logoAura}
+              alt="Aura Corporativa"
+              className="h-14 w-14 rounded-lg object-contain shadow-sm"
+            />
+          </div>
           <h1 className="mt-6 text-center text-2xl font-black text-[#0B192C]">
             Panel de Noticias Blog
           </h1>
@@ -294,22 +366,27 @@ export function BlogAdminPage() {
                 onChange={(event) => setPassword(event.target.value)}
                 className="mt-2 w-full rounded-lg border border-slate-200 px-4 py-3 font-normal outline-none transition focus:border-[#0B192C] focus:ring-2 focus:ring-slate-200"
                 placeholder="Introduce la clave de acceso"
+                autoFocus
               />
             </label>
-            {error && (
+
+            {toastMessage && toastType === 'error' && (
               <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700" role="alert">
-                {error}
+                {toastMessage}
               </p>
             )}
+
             <button
               type="submit"
               disabled={isSubmitting}
               className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#0B192C] px-4 py-3 font-bold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isSubmitting
-                ? <LoaderCircle size={18} className="animate-spin" aria-hidden="true" />
-                : <LogIn size={18} aria-hidden="true" />}
-              Iniciar sesión
+              {isSubmitting ? (
+                <LoaderCircle size={18} className="animate-spin" aria-hidden="true" />
+              ) : (
+                <LogIn size={18} aria-hidden="true" />
+              )}
+              Iniciar Sesión
             </button>
           </form>
         </section>
@@ -318,299 +395,488 @@ export function BlogAdminPage() {
   }
 
   return (
-    <main className="grow bg-slate-100">
-      <section className="bg-[#0B192C] px-4 py-5 text-white sm:px-6 lg:px-8">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4">
+    <main className="grow bg-slate-50 min-h-screen">
+      {/* Toast Alert flotante */}
+      {toastMessage && (
+        <div className="fixed top-5 right-5 z-50 flex items-center gap-3 rounded-lg px-4 py-3 shadow-xl transition-all animate-bounce text-sm font-semibold text-white bg-slate-900 border border-slate-700">
+          {toastType === 'success' ? (
+            <CheckCircle2 size={18} className="text-emerald-400" />
+          ) : (
+            <AlertTriangle size={18} className="text-red-400" />
+          )}
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
+      {/* Header del Gestor */}
+      <section className="bg-[#0B192C] px-4 py-4 text-white sm:px-6 lg:px-8 border-b border-white/10">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <img src={logoAura} alt="Aura Corporativa" className="h-11 w-11 rounded border border-white/30 object-contain" />
+            <img
+              src={logoAura}
+              alt="Aura Corporativa"
+              className="h-10 w-10 rounded bg-white p-1 object-contain shadow-xs"
+            />
             <div>
-              <h1 className="text-xl font-black">Gestor de Noticias</h1>
-              <p className="mt-1 text-xs font-semibold text-emerald-300">
-                <span aria-hidden="true">●</span> En vivo · {admin?.name}
-              </p>
+              <h1 className="text-lg font-black tracking-tight">Gestor de Noticias</h1>
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                En Vivo (Supabase Cloud){admin?.name ? ` · ${admin.name}` : ''}
+              </span>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <Link
               to="/blog"
-              className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-bold text-[#0B192C] transition hover:bg-slate-100"
+              target="_blank"
+              className="inline-flex items-center gap-2 rounded-lg bg-white/10 hover:bg-white/20 px-3.5 py-2 text-sm font-bold text-white transition border border-white/10"
+              title="Ver Blog en vivo"
             >
-              <ExternalLink size={16} aria-hidden="true" /> Ver blog
+              <ExternalLink size={15} aria-hidden="true" /> Ver Blog Web
             </Link>
             <button
               type="button"
               onClick={handleLogout}
-              className="inline-flex items-center gap-2 rounded-lg border border-white/25 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-white/10"
+              className="inline-flex items-center gap-2 rounded-lg border border-red-400/30 text-red-300 hover:bg-red-500/20 px-3.5 py-2 text-sm font-bold transition"
             >
-              <LogOut size={16} aria-hidden="true" /> Cerrar sesión
+              <LogOut size={15} aria-hidden="true" /> Cerrar Sesión
             </button>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm lg:flex-row">
-          <label className="flex min-w-0 flex-1 items-center gap-3 rounded-lg border border-slate-200 px-3.5 py-2.5 text-slate-400 focus-within:border-[#0B192C]">
-            <Search size={18} aria-hidden="true" />
-            <span className="sr-only">Buscar noticias</span>
-            <input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Buscar noticias por título o contenido..."
-              className="w-full bg-transparent text-sm text-slate-800 outline-none"
-            />
-          </label>
-          <label className="sr-only" htmlFor="admin-category">Filtrar por categoría</label>
-          <select
-            id="admin-category"
-            value={activeCategory}
-            onChange={(event) => setActiveCategory(event.target.value)}
-            className="rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 outline-none focus:border-[#0B192C]"
-          >
-            <option value="Todas">Todas las categorías</option>
-            {categories.map((category) => <option key={category}>{category}</option>)}
-          </select>
+      {/* Contenido Principal */}
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {/* Barra de Controles: Búsqueda, Filtro y Botón Nueva Noticia */}
+        <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-xs sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center">
+            {/* Buscador */}
+            <div className="relative flex-1">
+              <Search
+                size={18}
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                aria-hidden="true"
+              />
+              <input
+                type="text"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Buscar noticias por título o contenido..."
+                className="w-full rounded-lg border border-slate-200 pl-10 pr-3.5 py-2 text-sm text-slate-800 outline-none transition focus:border-[#0B192C] focus:ring-1 focus:ring-[#0B192C]"
+              />
+            </div>
+
+            {/* Filtro de Categoría */}
+            <select
+              value={selectedCategoryFilter}
+              onChange={(event) => setSelectedCategoryFilter(event.target.value)}
+              className="rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 outline-none transition focus:border-[#0B192C]"
+            >
+              <option value="Todas">Todas las categorías</option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Botón Nueva Noticia */}
           <button
             type="button"
-            onClick={openNewPostForm}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#0B192C] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-slate-800"
+            onClick={openCreateModal}
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#DC2626] hover:bg-red-700 px-4 py-2 text-sm font-bold text-white shadow-xs transition"
           >
-            <Plus size={18} aria-hidden="true" /> Nueva noticia
+            <Plus size={18} aria-hidden="true" /> Nueva Noticia
           </button>
         </div>
 
-        <div className="mt-5 flex flex-wrap gap-2 text-sm font-semibold text-slate-600">
-          <span className="rounded-full bg-white px-4 py-2 shadow-sm">{posts.length} noticias en total</span>
-          <span className="rounded-full bg-white px-4 py-2 shadow-sm">Mostrando {visiblePosts.length} resultados</span>
-          <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-emerald-700">
-            <CheckCircle2 size={16} aria-hidden="true" /> Sincronizado
+        {/* Fila de Estadísticas */}
+        <div className="mt-4 flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-600">
+          <span className="rounded-full bg-white px-3.5 py-1.5 shadow-2xs border border-slate-100">
+            <strong>{posts.length}</strong> noticias en total
           </span>
+          <span className="rounded-full bg-white px-3.5 py-1.5 shadow-2xs border border-slate-100">
+            Mostrando <strong>{filteredPosts.length}</strong> resultados
+          </span>
+          <button
+            type="button"
+            onClick={loadPosts}
+            title="Clic para recargar"
+            className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100 px-3.5 py-1.5 text-emerald-700 border border-emerald-200/60 transition"
+          >
+            <RefreshCw size={13} className={isLoadingPosts ? 'animate-spin' : ''} />
+            Sincronizado
+          </button>
         </div>
 
-        {(error || success) && (
-          <p
-            className={`mt-4 rounded-lg border p-3 text-sm ${
-              error
-                ? 'border-red-200 bg-red-50 text-red-700'
-                : 'border-emerald-200 bg-emerald-50 text-emerald-700'
-            }`}
-            role={error ? 'alert' : 'status'}
-          >
-            {error || success}
-          </p>
+        {/* Estado de Carga */}
+        {isLoadingPosts && (
+          <div className="flex flex-col items-center justify-center py-20 text-slate-500">
+            <LoaderCircle size={32} className="animate-spin text-[#0B192C]" />
+            <p className="mt-3 text-sm font-medium">Cargando noticias desde Supabase...</p>
+          </div>
         )}
 
-        {isEditorOpen && (
-          <form
-            onSubmit={handleSavePost}
-            className="mt-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"
-          >
-            <div className="mb-5 flex items-center justify-between gap-3">
-              <h2 className="text-xl font-black text-[#0B192C]">
-                {editingPost ? 'Editar noticia' : 'Crear noticia'}
-              </h2>
+        {/* Estado Vacío */}
+        {!isLoadingPosts && filteredPosts.length === 0 && (
+          <div className="mt-8 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-white p-12 text-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400 mb-4">
+              <FileText size={32} />
+            </div>
+            <h3 className="text-lg font-bold text-slate-800">No se encontraron noticias</h3>
+            <p className="mt-1 text-sm text-slate-500 max-w-sm">
+              {search || selectedCategoryFilter !== 'Todas'
+                ? 'Prueba cambiando los filtros o la búsqueda ingresada.'
+                : 'Aún no has creado ninguna noticia. ¡Publica tu primer artículo!'}
+            </p>
+            {!search && selectedCategoryFilter === 'Todas' && (
               <button
                 type="button"
-                onClick={() => setIsEditorOpen(false)}
-                aria-label="Cerrar formulario"
-                className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-800"
+                onClick={openCreateModal}
+                className="mt-5 inline-flex items-center gap-2 rounded-lg bg-[#DC2626] px-4 py-2 text-sm font-bold text-white transition hover:bg-red-700"
               >
-                <X size={20} aria-hidden="true" />
+                <Plus size={16} /> Publicar Noticia
               </button>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <label className="text-sm font-semibold text-slate-700 sm:col-span-2">
-                Título
-                <input
-                  required
-                  maxLength={180}
-                  value={postForm.title}
-                  onChange={(event) => {
-                    const title = event.target.value;
-                    setPostForm((current) => ({
-                      ...current,
-                      title,
-                      slug: slugIsManual ? current.slug : slugify(title),
-                    }));
-                  }}
-                  className="mt-1.5 w-full rounded-lg border border-slate-200 px-3.5 py-2.5 text-slate-800 outline-none focus:border-[#0B192C]"
-                />
-              </label>
-              <label className="text-sm font-semibold text-slate-700">
-                Slug de la noticia
-                <input
-                  required
-                  maxLength={200}
-                  value={postForm.slug}
-                  onChange={(event) => {
-                    setSlugIsManual(true);
-                    setPostForm((current) => ({ ...current, slug: slugify(event.target.value) }));
-                  }}
-                  className="mt-1.5 w-full rounded-lg border border-slate-200 px-3.5 py-2.5 text-slate-800 outline-none focus:border-[#0B192C]"
-                />
-              </label>
-              <label className="text-sm font-semibold text-slate-700">
-                Categoría
-                <select
-                  value={postForm.category}
-                  onChange={(event) => setPostForm((current) => ({
-                    ...current,
-                    category: event.target.value as BlogCategory,
-                  }))}
-                  className="mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-slate-800 outline-none focus:border-[#0B192C]"
-                >
-                  {categories.map((category) => <option key={category}>{category}</option>)}
-                </select>
-              </label>
-              <label className="text-sm font-semibold text-slate-700 sm:col-span-2">
-                URL de imagen de portada (opcional)
-                <input
-                  type="url"
-                  value={postForm.image_url ?? ''}
-                  onChange={(event) => setPostForm((current) => ({
-                    ...current,
-                    image_url: event.target.value || null,
-                  }))}
-                  placeholder="https://..."
-                  className="mt-1.5 w-full rounded-lg border border-slate-200 px-3.5 py-2.5 text-slate-800 outline-none focus:border-[#0B192C]"
-                />
-              </label>
-              <label className="text-sm font-semibold text-slate-700 sm:col-span-2">
-                Resumen
-                <textarea
-                  required
-                  maxLength={300}
-                  rows={2}
-                  value={postForm.excerpt}
-                  onChange={(event) => setPostForm((current) => ({ ...current, excerpt: event.target.value }))}
-                  className="mt-1.5 w-full resize-y rounded-lg border border-slate-200 px-3.5 py-2.5 text-slate-800 outline-none focus:border-[#0B192C]"
-                />
-              </label>
-              <label className="text-sm font-semibold text-slate-700 sm:col-span-2">
-                Contenido de la noticia
-                <textarea
-                  required
-                  maxLength={50000}
-                  rows={8}
-                  value={postForm.content}
-                  onChange={(event) => setPostForm((current) => ({ ...current, content: event.target.value }))}
-                  className="mt-1.5 w-full resize-y rounded-lg border border-slate-200 px-3.5 py-2.5 text-slate-800 outline-none focus:border-[#0B192C]"
-                />
-              </label>
-              <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                <input
-                  type="checkbox"
-                  checked={postForm.published}
-                  onChange={(event) => setPostForm((current) => ({
-                    ...current,
-                    published: event.target.checked,
-                  }))}
-                  className="h-4 w-4 accent-[#DC2626]"
-                />
-                Publicar en el blog
-              </label>
-              <label className="text-sm font-semibold text-slate-700">
-                Fecha de publicación
-                <input
-                  type="date"
-                  disabled={!postForm.published}
-                  value={postForm.published_at ?? ''}
-                  onChange={(event) => setPostForm((current) => ({
-                    ...current,
-                    published_at: event.target.value || null,
-                  }))}
-                  className="mt-1.5 w-full rounded-lg border border-slate-200 px-3.5 py-2.5 text-slate-800 outline-none focus:border-[#0B192C] disabled:bg-slate-100"
-                />
-              </label>
-            </div>
-
-            <div className="mt-6 flex flex-wrap justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setIsEditorOpen(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                disabled={isSaving}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#0B192C] px-5 py-2.5 text-sm font-bold text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {isSaving && <LoaderCircle size={16} className="animate-spin" aria-hidden="true" />}
-                {editingPost ? 'Guardar cambios' : 'Crear noticia'}
-              </button>
-            </div>
-          </form>
+            )}
+          </div>
         )}
 
-        {isLoadingPosts ? (
-          <p className="flex items-center justify-center gap-2 py-20 text-slate-600" role="status">
-            <LoaderCircle size={20} className="animate-spin" aria-hidden="true" /> Cargando noticias...
-          </p>
-        ) : visiblePosts.length > 0 ? (
-          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {visiblePosts.map((post) => (
-              <article key={post.id} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-                <div className="relative h-44 bg-gradient-to-br from-[#0B192C] to-slate-600">
-                  {post.image_url ? (
-                    <img src={post.image_url} alt="" className="h-full w-full object-cover" loading="lazy" />
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-white">
-                      <FileText size={36} aria-hidden="true" />
-                    </div>
-                  )}
-                  <span className="absolute right-3 top-3 rounded bg-[#0B192C] px-3 py-1.5 text-xs font-bold uppercase text-white">
+        {/* Cuadrícula de Noticias */}
+        {!isLoadingPosts && filteredPosts.length > 0 && (
+          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredPosts.map((post) => (
+              <article
+                key={post.id}
+                className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xs transition hover:-translate-y-0.5 hover:shadow-md"
+              >
+                {/* Portada con Badge de Categoría */}
+                <div className="relative h-44 bg-slate-100 overflow-hidden">
+                  <img
+                    src={blogService.getImageUrl(post.image)}
+                    alt={post.title}
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    loading="lazy"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = '/assets/images/blog/Noticia1.webp';
+                    }}
+                  />
+                  <span className="absolute top-3 right-3 rounded bg-[#0B192C]/90 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white shadow-2xs">
                     {post.category}
                   </span>
                 </div>
-                <div className="p-5">
-                  <p className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
-                    <CalendarDays size={14} aria-hidden="true" /> {displayDate(post.published_at)}
-                    <span className={`ml-auto rounded-full px-2 py-1 ${post.published ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'}`}>
-                      {post.published ? 'Publicada' : 'Borrador'}
+
+                {/* Contenido de la Tarjeta */}
+                <div className="flex flex-1 flex-col p-5">
+                  <div className="flex items-center justify-between text-xs font-semibold text-slate-500 mb-2">
+                    <span className="inline-flex items-center gap-1.5">
+                      <CalendarDays size={14} className="text-slate-400" />
+                      {post.date}
                     </span>
-                  </p>
-                  <h2 className="mt-3 line-clamp-2 min-h-12 font-black leading-snug text-[#0B192C]">{post.title}</h2>
-                  <p className="mt-2 line-clamp-3 min-h-[4.5rem] text-sm leading-6 text-slate-600">{post.excerpt}</p>
-                  <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
-                    {post.published ? (
-                      <Link to={`/blog/${post.slug}`} className="text-sm font-bold text-[#DC2626] hover:underline">
-                        Ver noticia
-                      </Link>
-                    ) : (
-                      <span className="text-sm text-slate-400">Aún no publicada</span>
+                    {post.link && (
+                      <span className="inline-flex items-center gap-1 rounded bg-blue-50 px-2 py-0.5 text-[11px] font-bold text-blue-700">
+                        <LinkIcon size={11} /> Link
+                      </span>
                     )}
-                    <div className="flex gap-1">
-                      <button
-                        type="button"
-                        onClick={() => openEditPostForm(post)}
-                        aria-label={`Editar ${post.title}`}
-                        className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-[#0B192C]"
+                  </div>
+
+                  <h3 className="line-clamp-2 text-base font-bold leading-snug text-slate-900 group-hover:text-[#DC2626] transition-colors">
+                    {post.title}
+                  </h3>
+
+                  <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-slate-600">
+                    {post.desc}
+                  </p>
+
+                  {post.link && (
+                    <div className="mt-3 truncate text-xs text-blue-600 hover:underline">
+                      <a
+                        href={post.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 max-w-full truncate"
                       >
-                        <Pencil size={17} aria-hidden="true" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => void handleDeletePost(post)}
-                        aria-label={`Eliminar ${post.title}`}
-                        className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-[#DC2626]"
-                      >
-                        <Trash2 size={17} aria-hidden="true" />
-                      </button>
+                        <ExternalLink size={12} className="shrink-0" />
+                        <span className="truncate">{post.link}</span>
+                      </a>
                     </div>
+                  )}
+
+                  {/* Botones de Acción (Editar / Eliminar) */}
+                  <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={() => openEditModal(post)}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-700 transition"
+                      title="Editar Noticia"
+                    >
+                      <Pencil size={13} /> Editar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => openDeleteModal(post)}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 px-3 py-1.5 text-xs font-bold text-red-700 transition"
+                      title="Eliminar Noticia"
+                    >
+                      <Trash2 size={13} /> Eliminar
+                    </button>
                   </div>
                 </div>
               </article>
             ))}
           </div>
-        ) : (
-          <div className="mt-6 rounded-xl border border-slate-200 bg-white px-6 py-16 text-center text-slate-600">
-            {posts.length === 0 ? 'Aún no hay noticias. Crea la primera para comenzar.' : 'No hay resultados para esos filtros.'}
-          </div>
         )}
       </section>
+
+      {/* ========================================================================= */}
+      {/* MODAL CREAR / EDITAR NOTICIA (MISMOS INPUTS QUE ZWE)                      */}
+      {/* ========================================================================= */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs overflow-y-auto"
+          onClick={closeModal}
+        >
+          <div
+            className="w-full max-w-2xl rounded-2xl bg-white shadow-2xl border border-slate-200 my-8 overflow-hidden transition-all animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4 bg-slate-50/60">
+              <h2 className="text-lg font-black text-[#0B192C]">
+                {isEditing ? 'Editar Noticia' : 'Publicar Nueva Noticia'}
+              </h2>
+              <button
+                type="button"
+                onClick={closeModal}
+                disabled={isSaving}
+                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-200 hover:text-slate-700 transition"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Modal Form Body */}
+            <form onSubmit={handleSavePost} className="p-6 space-y-4.5">
+              {/* 1. Título del Artículo */}
+              <div>
+                <label htmlFor="postTitle" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                  Título del Artículo <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="postTitle"
+                  required
+                  value={postForm.title}
+                  onChange={(e) => setPostForm({ ...postForm, title: e.target.value })}
+                  placeholder="Ej: Nuevas normativas de SUNAFIL para MYPEs en 2026"
+                  className="mt-1.5 w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0B192C] focus:ring-1 focus:ring-[#0B192C]"
+                />
+              </div>
+
+              {/* 2. Fila Categoría y Fecha de Publicación */}
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="postCategory" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                    Categoría <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    id="postCategory"
+                    required
+                    value={postForm.category}
+                    onChange={(e) => setPostForm({ ...postForm, category: e.target.value as BlogCategory })}
+                    className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0B192C]"
+                  >
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="postDate" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                    Fecha de Publicación <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="postDate"
+                    required
+                    value={postForm.date}
+                    onChange={(e) => setPostForm({ ...postForm, date: e.target.value })}
+                    placeholder="Ej: 05 Oct, 2026"
+                    className="mt-1.5 w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0B192C] focus:ring-1 focus:ring-[#0B192C]"
+                  />
+                </div>
+              </div>
+
+              {/* 3. Resumen / Contenido del Artículo */}
+              <div>
+                <label htmlFor="postDesc" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                  Resumen / Contenido del Artículo <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  id="postDesc"
+                  rows={4}
+                  required
+                  value={postForm.desc}
+                  onChange={(e) => setPostForm({ ...postForm, desc: e.target.value })}
+                  placeholder="Describe los puntos clave del artículo..."
+                  className="mt-1.5 w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0B192C] focus:ring-1 focus:ring-[#0B192C] resize-y"
+                />
+              </div>
+
+              {/* 4. Enlace a la Noticia Completa (Opcional) */}
+              <div>
+                <label htmlFor="postLink" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                  Enlace a la Noticia Completa (Opcional){' '}
+                  <span className="font-normal text-slate-500 text-[11px] normal-case">
+                    (Ej: link de diario, portal de noticias o PDF)
+                  </span>
+                </label>
+                <div className="relative mt-1.5">
+                  <LinkIcon
+                    size={16}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                    aria-hidden="true"
+                  />
+                  <input
+                    type="url"
+                    id="postLink"
+                    value={postForm.link}
+                    onChange={(e) => setPostForm({ ...postForm, link: e.target.value })}
+                    placeholder="https://ejemplo.com/noticia-completa"
+                    className="w-full rounded-lg border border-slate-300 pl-10 pr-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0B192C] focus:ring-1 focus:ring-[#0B192C]"
+                  />
+                </div>
+              </div>
+
+              {/* 5. Subida de Imagen con Dropzone y Vista Previa */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                  Imagen de la Noticia
+                </label>
+                <div className="space-y-3">
+                  {/* Dropzone */}
+                  <label
+                    htmlFor="imageInput"
+                    className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/80 p-5 text-center transition hover:border-[#DC2626] hover:bg-red-50/20"
+                  >
+                    <UploadCloud size={30} className="text-[#DC2626] mb-1" />
+                    <span className="text-sm font-semibold text-slate-700">
+                      Haz clic aquí para <strong>subir una imagen</strong> desde tu dispositivo
+                    </span>
+                    <span className="text-xs text-slate-400 mt-0.5">
+                      Formatos soportados: WEBP, PNG, JPG (máx. 5MB)
+                    </span>
+                    <input
+                      type="file"
+                      id="imageInput"
+                      accept="image/*"
+                      onChange={handleFileSelected}
+                      className="hidden"
+                    />
+                  </label>
+
+                  {/* Vista Previa de la Imagen */}
+                  {imagePreview && (
+                    <div className="relative h-36 w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
+                      <img
+                        src={imagePreview}
+                        alt="Vista previa"
+                        className="h-full w-full object-cover"
+                      />
+                      <span className="absolute bottom-2 left-2 rounded bg-black/75 px-2 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider">
+                        Vista Previa
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="mt-6 flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  disabled={isSaving}
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50 transition"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] hover:bg-red-700 px-5 py-2 text-sm font-bold text-white transition disabled:opacity-60 shadow-xs"
+                >
+                  {isSaving && <LoaderCircle size={16} className="animate-spin" />}
+                  <span>
+                    {isSaving
+                      ? isUploading
+                        ? 'Subiendo imagen...'
+                        : 'Guardando...'
+                      : isEditing
+                      ? 'Actualizar Noticia'
+                      : 'Publicar Noticia'}
+                  </span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL CONFIRMAR ELIMINACIÓN                                               */}
+      {/* ========================================================================= */}
+      {isDeleteModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs"
+          onClick={closeDeleteModal}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-slate-200 transition-all animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 text-red-600 mb-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
+                <AlertTriangle size={22} />
+              </div>
+              <h2 className="text-lg font-black text-slate-900">¿Eliminar Noticia?</h2>
+            </div>
+
+            <p className="text-sm text-slate-600 leading-relaxed">
+              ¿Estás seguro de que deseas eliminar la noticia:
+            </p>
+            <blockquote className="my-3 rounded-lg border-l-4 border-red-500 bg-slate-50 p-3 text-sm italic text-slate-800">
+              "{postToDelete?.title}"
+            </blockquote>
+            <p className="text-xs text-slate-500">
+              Esta acción no se puede deshacer y el artículo desaparecerá del blog web.
+            </p>
+
+            <div className="mt-6 flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+              <button
+                type="button"
+                onClick={closeDeleteModal}
+                disabled={isDeleting}
+                className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50 transition"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleDeletePost}
+                disabled={isDeleting}
+                className="inline-flex items-center gap-2 rounded-lg bg-red-600 hover:bg-red-700 px-4 py-2 text-sm font-bold text-white transition disabled:opacity-60 shadow-xs"
+              >
+                {isDeleting && <LoaderCircle size={16} className="animate-spin" />}
+                <span>{isDeleting ? 'Eliminando...' : 'Sí, Eliminar'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

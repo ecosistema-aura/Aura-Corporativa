@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, CalendarDays, FileText, Search } from 'lucide-react';
+import { ArrowLeft, CalendarDays, ExternalLink, FileText, Search } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { blogService } from '../services/blogService';
 import type { BlogCategory, BlogPost } from '../types';
@@ -12,7 +12,7 @@ const categories: Array<'Todos' | BlogCategory> = [
   'Contabilidad',
 ];
 
-function formatDate(date: string | null): string {
+function formatDate(date?: string | null): string {
   if (!date) return 'Borrador';
 
   return new Intl.DateTimeFormat('es-PE', {
@@ -25,16 +25,16 @@ function formatDate(date: string | null): string {
 
 function BlogPostCard({ post }: { post: BlogPost }) {
   const [imageFailed, setImageFailed] = useState(false);
+  const displayDateStr = post.date || formatDate(post.published_at);
+  const displayDesc = post.desc || post.excerpt || post.content || '';
+  const imageUrl = post.image_url || (post.image ? blogService.getImageUrl(post.image) : null);
 
-  return (
-    <Link
-      to={`/blog/${post.slug}`}
-      className="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
-    >
+  const cardContent = (
+    <>
       <div className="relative h-56 overflow-hidden bg-slate-100">
-        {post.image_url && !imageFailed ? (
+        {imageUrl && !imageFailed ? (
           <img
-            src={post.image_url}
+            src={imageUrl}
             alt=""
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
@@ -50,18 +50,40 @@ function BlogPostCard({ post }: { post: BlogPost }) {
         </span>
         <span className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded bg-[#0B192C]/90 px-3 py-1.5 text-xs font-semibold text-white">
           <CalendarDays size={14} aria-hidden="true" />
-          {formatDate(post.published_at)}
+          {displayDateStr}
         </span>
       </div>
       <div className="p-5 sm:p-6">
         <h2 className="line-clamp-2 text-lg font-bold leading-snug text-[#0B192C] transition-colors group-hover:text-[#DC2626]">
           {post.title}
         </h2>
-        <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{post.excerpt}</p>
+        <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{displayDesc}</p>
         <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#DC2626]">
-          Leer noticia <span aria-hidden="true">→</span>
+          {post.link ? 'Leer noticia completa' : 'Leer noticia'} <span aria-hidden="true">→</span>
         </span>
       </div>
+    </>
+  );
+
+  if (post.link) {
+    return (
+      <a
+        href={post.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
+      >
+        {cardContent}
+      </a>
+    );
+  }
+
+  return (
+    <Link
+      to={`/blog/${post.slug || post.id}`}
+      className="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
+    >
+      {cardContent}
     </Link>
   );
 }
@@ -165,9 +187,9 @@ export function BlogPage() {
               <p className="py-16 text-center text-slate-600" role="status">Cargando noticia...</p>
             ) : selectedPost ? (
               <>
-                {selectedPost.image_url && (
+                {(selectedPost.image_url || selectedPost.image) && (
                   <img
-                    src={selectedPost.image_url}
+                    src={selectedPost.image_url || blogService.getImageUrl(selectedPost.image)}
                     alt=""
                     className="mt-6 max-h-[28rem] w-full rounded-lg object-cover"
                   />
@@ -178,18 +200,43 @@ export function BlogPage() {
                   </span>
                   <span className="inline-flex items-center gap-1.5">
                     <CalendarDays size={15} aria-hidden="true" />
-                    {formatDate(selectedPost.published_at)}
+                    {selectedPost.date || formatDate(selectedPost.published_at)}
                   </span>
+                  {selectedPost.link && (
+                    <a
+                      href={selectedPost.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-blue-50 px-3 py-1 font-bold text-xs text-blue-700 hover:bg-blue-100 transition"
+                    >
+                      <ExternalLink size={13} /> Fuente Original
+                    </a>
+                  )}
                 </div>
                 <h2 className="mt-4 text-3xl font-black leading-tight text-[#0B192C] sm:text-4xl">
                   {selectedPost.title}
                 </h2>
                 <p className="mt-5 border-l-4 border-[#DC2626] pl-4 text-lg leading-8 text-slate-600">
-                  {selectedPost.excerpt}
+                  {selectedPost.desc || selectedPost.excerpt}
                 </p>
-                <div className="mt-7 whitespace-pre-line text-base leading-8 text-slate-700">
-                  {selectedPost.content}
-                </div>
+                {selectedPost.content && selectedPost.content !== selectedPost.desc && (
+                  <div className="mt-7 whitespace-pre-line text-base leading-8 text-slate-700">
+                    {selectedPost.content}
+                  </div>
+                )}
+                {selectedPost.link && (
+                  <div className="mt-8 pt-6 border-t border-slate-100">
+                    <a
+                      href={selectedPost.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 rounded-lg bg-[#DC2626] hover:bg-red-700 px-5 py-2.5 text-sm font-bold text-white transition shadow-sm"
+                    >
+                      <span>Leer noticia completa en el portal original</span>
+                      <ExternalLink size={16} />
+                    </a>
+                  </div>
+                )}
               </>
             ) : (
               <p className="py-16 text-center text-slate-600" role="alert">
