@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { DollarSign, ShieldCheck, Target, Clock } from 'lucide-react';
 import whyAuraBg from '../assets/por_que_aura.jpg';
 
@@ -106,12 +107,12 @@ export const WhyAuraSection: React.FC = () => {
               Diseñamos propuestas a la medida de tu sector y volumen de colaboradores, garantizando continuidad y tranquilidad.
             </p>
           </div>
-          <a
-            href="#contacto"
+          <Link
+            to="/contacto"
             className="shrink-0 inline-flex items-center justify-center px-6 py-3.5 bg-[#DC2626] hover:bg-red-700 text-white font-bold text-sm rounded-xl shadow-md transition-all active:scale-95 cursor-pointer"
           >
             Solicitar Asesoría
-          </a>
+          </Link>
         </div>
       </div>
     </section>

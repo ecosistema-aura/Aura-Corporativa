@@ -2,9 +2,13 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { LandingPage } from './pages/LandingPage';
+import { ServiciosPage } from './pages/ServiciosPage';
+import { PorQueAuraPage } from './pages/PorQueAuraPage';
 import { NosotrosPage } from './pages/NosotrosPage';
 import { BlogPage } from './pages/BlogPage';
 import { BlogAdminPage } from './pages/BlogAdminPage';
+import { FaqPage } from './pages/FaqPage';
+import { ContactoPage } from './pages/ContactoPage';
 import { Footer } from './components/Footer';
 import { WhatsAppButton } from './components/WhatsAppButton';
 import { ScrollToTopButton } from './components/ScrollToTopButton';
@@ -50,9 +54,13 @@ function AnimatedRoutes({ onOpenPrivacy }: { onOpenPrivacy: () => void }) {
     <div key={location.pathname} className="page-transition-enter flex flex-col grow">
       <Routes location={location}>
         <Route path="/" element={<LandingPage onOpenPrivacy={onOpenPrivacy} />} />
+        <Route path="/servicios" element={<ServiciosPage />} />
+        <Route path="/por-que-aura" element={<PorQueAuraPage />} />
         <Route path="/nosotros" element={<NosotrosPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogPage />} />
+        <Route path="/faq" element={<FaqPage />} />
+        <Route path="/contacto" element={<ContactoPage onOpenPrivacy={onOpenPrivacy} />} />
         <Route path="/admin-blog" element={<BlogAdminPage />} />
       </Routes>
     </div>

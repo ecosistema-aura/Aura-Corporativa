@@ -1,13 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import heroImage from '../assets/hero_corporate.jpg';
-import { scrollToElementAnimated } from '../utils/scrollUtils';
 
 export const Hero: React.FC = () => {
-  const handleScrollTo = (target: string) => (e: React.MouseEvent) => {
-    e.preventDefault();
-    scrollToElementAnimated(target, 80, 800);
-  };
-
   return (
     <section
       id="inicio"
@@ -41,23 +36,24 @@ export const Hero: React.FC = () => {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-4 reveal-up delay-4">
-            <a
-              href="#contacto"
-              onClick={handleScrollTo('#contacto')}
+            <Link
+              to="/contacto"
               className="inline-flex items-center justify-center px-7 py-3.5 text-base font-bold text-white bg-[#DC2626] hover:bg-red-700 active:scale-95 rounded-md transition-all shadow-md cursor-pointer"
             >
               Solicita una Asesoría
-            </a>
-            <a
-              href="#servicios"
-              onClick={handleScrollTo('#servicios')}
+            </Link>
+            <Link
+              to="/servicios"
               className="inline-flex items-center justify-center px-7 py-3.5 text-base font-bold text-slate-900 bg-white hover:bg-slate-100 active:scale-95 rounded-md transition-all shadow-md cursor-pointer"
             >
-              Más Información
-            </a>
+              Ver Servicios
+            </Link>
           </div>
         </div>
       </div>
     </section>
   );
 };
+
+export default Hero;
+

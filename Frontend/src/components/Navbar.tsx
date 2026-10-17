@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Phone } from 'lucide-react';
 import logoAura from '../assets/logo_aura.jpg';
 import { siteConfig } from '../config/siteConfig';
-
-import { scrollToTopAnimated, scrollToElementAnimated } from '../utils/scrollUtils';
 
 interface NavbarProps {
   isMenuOpen?: boolean;
@@ -15,28 +13,18 @@ export const Navbar: React.FC<NavbarProps> = ({ isMenuOpen, onMenuToggle }) => {
   const [internalOpen, setInternalOpen] = useState(false);
   const isOpen = isMenuOpen !== undefined ? isMenuOpen : internalOpen;
   const location = useLocation();
-  const navigate = useNavigate();
 
   const isHome = location.pathname === '/';
+  const isServicios = location.pathname === '/servicios';
+  const isPorQueAura = location.pathname === '/por-que-aura';
   const isNosotros = location.pathname === '/nosotros';
   const isBlog = location.pathname === '/blog' || location.pathname.startsWith('/blog/');
+  const isFaq = location.pathname === '/faq';
+  const isContacto = location.pathname === '/contacto';
 
   const handleToggle = (open: boolean) => {
     setInternalOpen(open);
     onMenuToggle?.(open);
-  };
-
-  const handleHomeClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    handleToggle(false);
-
-    if (!isHome) {
-      navigate('/');
-      window.scrollTo(0, 0);
-    } else {
-      // Si ya está en inicio, animar el regreso hacia arriba
-      scrollToTopAnimated(800);
-    }
   };
 
   useEffect(() => {
@@ -50,19 +38,17 @@ export const Navbar: React.FC<NavbarProps> = ({ isMenuOpen, onMenuToggle }) => {
     };
   }, [isOpen]);
 
-  const handleNosotrosClick = () => {
-    handleToggle(false);
-    window.scrollTo(0, 0);
-  };
+  const navItemClass = (isActive: boolean) =>
+    `relative py-1 transition-all duration-300 cursor-pointer ${
+      isActive
+        ? 'text-[#DC2626] font-bold after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2.5px] after:bg-[#DC2626] after:rounded-full after:transition-all after:duration-300'
+        : 'text-slate-700 hover:text-[#DC2626]'
+    }`;
 
-  const handleAnchorClick = (href: string) => {
-    handleToggle(false);
-    if (!isHome) {
-      navigate('/' + href);
-    } else {
-      scrollToElementAnimated(href, 80, 800);
-    }
-  };
+  const mobileItemClass = (isActive: boolean) =>
+    `text-lg font-semibold py-2 px-3 rounded-lg flex items-center transition-colors cursor-pointer ${
+      isActive ? 'bg-red-50 text-[#DC2626]' : 'text-slate-800 hover:bg-slate-50'
+    }`;
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-xs border-b border-slate-100 font-sans">
@@ -70,7 +56,10 @@ export const Navbar: React.FC<NavbarProps> = ({ isMenuOpen, onMenuToggle }) => {
         {/* Brand Logo oficial */}
         <Link
           to="/"
-          onClick={handleHomeClick}
+          onClick={() => {
+            handleToggle(false);
+            window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+          }}
           className="flex items-center select-none py-1 z-50 cursor-pointer"
         >
           <img 
@@ -84,77 +73,66 @@ export const Navbar: React.FC<NavbarProps> = ({ isMenuOpen, onMenuToggle }) => {
         <nav className="hidden md:flex items-center space-x-7 text-base font-medium text-slate-700">
           <Link
             to="/"
-            onClick={handleHomeClick}
-            className={`relative py-1 transition-all duration-300 cursor-pointer ${
-              isHome
-                ? 'text-[#DC2626] font-bold after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2.5px] after:bg-[#DC2626] after:rounded-full after:transition-all after:duration-300'
-                : 'text-slate-700 hover:text-[#DC2626]'
-            }`}
+            onClick={() => handleToggle(false)}
+            className={navItemClass(isHome)}
           >
             Inicio
           </Link>
 
           <Link
+            to="/servicios"
+            onClick={() => handleToggle(false)}
+            className={navItemClass(isServicios)}
+          >
+            Servicios
+          </Link>
+
+          <Link
+            to="/por-que-aura"
+            onClick={() => handleToggle(false)}
+            className={navItemClass(isPorQueAura)}
+          >
+            ¿Por qué Aura?
+          </Link>
+
+          <Link
+            to="/nosotros"
+            onClick={() => handleToggle(false)}
+            className={navItemClass(isNosotros)}
+          >
+            Nosotros
+          </Link>
+
+          <Link
             to="/blog"
-            onClick={() => {
-              handleToggle(false);
-              window.scrollTo(0, 0);
-            }}
-            className={`relative py-1 transition-all duration-300 cursor-pointer ${
-              isBlog
-                ? 'text-[#DC2626] font-bold after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2.5px] after:bg-[#DC2626] after:rounded-full after:transition-all after:duration-300'
-                : 'text-slate-700 hover:text-[#DC2626]'
-            }`}
+            onClick={() => handleToggle(false)}
+            className={navItemClass(isBlog)}
           >
             Blog
           </Link>
 
-          <button
-            type="button"
-            onClick={() => handleAnchorClick('#servicios')}
-            className="py-1 hover:text-[#DC2626] transition-colors duration-200 cursor-pointer"
-          >
-            Servicios
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleAnchorClick('#por-que-aura')}
-            className="py-1 hover:text-[#DC2626] transition-colors duration-200 cursor-pointer"
-          >
-            ¿Por qué Aura?
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleAnchorClick('#faq')}
-            className="py-1 hover:text-[#DC2626] transition-colors duration-200 cursor-pointer"
+          <Link
+            to="/faq"
+            onClick={() => handleToggle(false)}
+            className={navItemClass(isFaq)}
           >
             FAQ
-          </button>
-
-          <Link
-            to="/nosotros"
-            onClick={handleNosotrosClick}
-            className={`relative py-1 transition-all duration-300 cursor-pointer ${
-              isNosotros
-                ? 'text-[#DC2626] font-bold after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2.5px] after:bg-[#DC2626] after:rounded-full after:transition-all after:duration-300'
-                : 'text-slate-700 hover:text-[#DC2626]'
-            }`}
-          >
-            Nosotros
           </Link>
         </nav>
 
         {/* Right Desktop CTA + Mobile Hamburger Button */}
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => handleAnchorClick('#contacto')}
-            className="hidden sm:inline-flex items-center justify-center px-5 py-2.5 text-sm sm:text-base font-semibold text-white bg-[#DC2626] hover:bg-red-700 active:scale-95 rounded-md transition-all shadow-xs cursor-pointer"
+          <Link
+            to="/contacto"
+            onClick={() => handleToggle(false)}
+            className={`hidden sm:inline-flex items-center justify-center px-5 py-2.5 text-sm sm:text-base font-semibold rounded-md transition-all shadow-xs cursor-pointer ${
+              isContacto
+                ? 'bg-red-700 text-white ring-2 ring-[#DC2626] ring-offset-2'
+                : 'text-white bg-[#DC2626] hover:bg-red-700 active:scale-95'
+            }`}
           >
             Solicitar Contacto
-          </button>
+          </Link>
 
           {/* Botón de Hamburguesa */}
           <button
@@ -182,64 +160,65 @@ export const Navbar: React.FC<NavbarProps> = ({ isMenuOpen, onMenuToggle }) => {
             <nav className="flex flex-col space-y-2.5">
               <Link
                 to="/"
-                onClick={handleHomeClick}
-                className={'text-lg font-semibold py-2 px-3 rounded-lg flex items-center transition-colors cursor-pointer ' + (isHome ? 'bg-red-50 text-[#DC2626]' : 'text-slate-800 hover:bg-slate-50')}
+                onClick={() => handleToggle(false)}
+                className={mobileItemClass(isHome)}
               >
                 <span>Inicio</span>
               </Link>
 
               <Link
+                to="/servicios"
+                onClick={() => handleToggle(false)}
+                className={mobileItemClass(isServicios)}
+              >
+                <span>Servicios</span>
+              </Link>
+
+              <Link
+                to="/por-que-aura"
+                onClick={() => handleToggle(false)}
+                className={mobileItemClass(isPorQueAura)}
+              >
+                <span>¿Por qué Aura?</span>
+              </Link>
+
+              <Link
+                to="/nosotros"
+                onClick={() => handleToggle(false)}
+                className={mobileItemClass(isNosotros)}
+              >
+                <span>Nosotros</span>
+              </Link>
+
+              <Link
                 to="/blog"
-                onClick={() => {
-                  handleToggle(false);
-                  window.scrollTo(0, 0);
-                }}
-                className={'text-lg font-semibold py-2 px-3 rounded-lg flex items-center transition-colors ' + (isBlog ? 'bg-red-50 text-[#DC2626]' : 'text-slate-800 hover:bg-slate-50')}
+                onClick={() => handleToggle(false)}
+                className={mobileItemClass(isBlog)}
               >
                 <span>Blog</span>
               </Link>
 
-              <button
-                type="button"
-                onClick={() => handleAnchorClick('#servicios')}
-                className="text-lg font-semibold py-2 px-3 rounded-lg flex items-center text-slate-800 hover:bg-slate-50 transition-colors text-left cursor-pointer"
-              >
-                <span>Servicios</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleAnchorClick('#por-que-aura')}
-                className="text-lg font-semibold py-2 px-3 rounded-lg flex items-center text-slate-800 hover:bg-slate-50 transition-colors text-left cursor-pointer"
-              >
-                <span>¿Por qué Aura?</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleAnchorClick('#faq')}
-                className="text-lg font-semibold py-2 px-3 rounded-lg flex items-center text-slate-800 hover:bg-slate-50 transition-colors text-left cursor-pointer"
+              <Link
+                to="/faq"
+                onClick={() => handleToggle(false)}
+                className={mobileItemClass(isFaq)}
               >
                 <span>FAQ</span>
-              </button>
-
-              <Link
-                to="/nosotros"
-                onClick={handleNosotrosClick}
-                className={'text-lg font-semibold py-2 px-3 rounded-lg flex items-center transition-colors ' + (isNosotros ? 'bg-red-50 text-[#DC2626]' : 'text-slate-800 hover:bg-slate-50')}
-              >
-                <span>Nosotros</span>
               </Link>
             </nav>
 
             <div className="pt-4 border-t border-slate-100 space-y-3">
-              <button
-                type="button"
-                onClick={() => handleAnchorClick('#contacto')}
-                className="w-full py-3.5 px-4 bg-[#DC2626] hover:bg-red-700 text-white font-bold text-base rounded-lg transition-colors text-center shadow-xs flex items-center justify-center cursor-pointer"
+              <Link
+                to="/contacto"
+                onClick={() => handleToggle(false)}
+                className={`w-full py-3.5 px-4 text-white font-bold text-base rounded-lg transition-colors text-center shadow-xs flex items-center justify-center cursor-pointer ${
+                  isContacto
+                    ? 'bg-red-700 ring-2 ring-[#DC2626] ring-offset-2'
+                    : 'bg-[#DC2626] hover:bg-red-700'
+                }`}
               >
                 Solicitar Contacto
-              </button>
+              </Link>
 
               <a
                 href={'tel:' + siteConfig.contact.phone.value}

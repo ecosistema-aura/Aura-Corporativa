@@ -1,5 +1,6 @@
 import logoAura from '../assets/logo_aura.jpg';
 import React, { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Share2, 
   ShieldCheck, 
@@ -533,12 +534,12 @@ export const NosotrosPage: React.FC = () => {
           <p className="text-slate-300 text-xs sm:text-sm md:text-base max-w-xl mx-auto mb-6 sm:mb-8">
             Contáctenos hoy mismo para recibir una asesoría corporativa sin compromiso.
           </p>
-          <a
-            href="/#contacto"
+          <Link
+            to="/contacto"
             className="w-full sm:w-auto inline-flex items-center justify-center px-6 sm:px-8 py-3.5 sm:py-4 bg-[#DC2626] hover:bg-red-700 active:scale-95 text-white font-bold text-sm sm:text-base rounded-xl shadow-lg shadow-red-600/30 transition-all cursor-pointer"
           >
             <span>Solicitar Cotización Corporativa</span>
-          </a>
+          </Link>
         </div>
       </section>
     </main>
