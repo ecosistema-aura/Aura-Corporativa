@@ -1,14 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Hero } from '../components/Hero';
-import { TestimonialsSection } from '../components/TestimonialsSection';
 import { 
   Briefcase, 
   ShieldCheck, 
   Users, 
   BookOpen, 
-  ArrowRight, 
-  CheckCircle2 
+  ArrowRight 
 } from 'lucide-react';
 
 interface LandingPageProps {
@@ -126,17 +124,10 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
         </div>
       </section>
 
-      {/* 3. Casos de Éxito / Testimonios */}
-      <TestimonialsSection />
-
-      {/* 4. Banner CTA Final hacia Contacto */}
+      {/* 3. Banner CTA Final hacia Contacto */}
       <section className="bg-[#0B192C] text-white py-16 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-10 bg-[radial-gradient(#DC2626_1px,transparent_1px)] [background-size:16px_16px]" />
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-xs font-semibold text-red-400 mb-4 tracking-wider uppercase">
-            <CheckCircle2 size={14} />
-            <span>Respaldo Garantizado</span>
-          </div>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight mb-4">
             Comience a transformar la gestión de su empresa
           </h2>

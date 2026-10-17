@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Briefcase, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { ServicesSection } from '../components/ServicesSection';
 
 export const ServiciosPage: React.FC = () => {
@@ -10,10 +10,6 @@ export const ServiciosPage: React.FC = () => {
       <section className="bg-[#0B192C] text-white py-16 sm:py-20 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-10 bg-[radial-gradient(#DC2626_1px,transparent_1px)] [background-size:16px_16px]" />
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-xs font-semibold text-red-400 mb-4 tracking-wider uppercase">
-            <Briefcase size={14} />
-            <span>Portafolio Corporativo</span>
-          </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
             Nuestros <span className="text-[#DC2626]">Servicios</span>
           </h1>

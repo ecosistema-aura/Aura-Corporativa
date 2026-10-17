@@ -1,5 +1,4 @@
 import React from 'react';
-import { Mail } from 'lucide-react';
 import { ContactInfoSection } from '../components/ContactInfoSection';
 
 interface ContactoPageProps {
@@ -13,10 +12,6 @@ export const ContactoPage: React.FC<ContactoPageProps> = ({ onOpenPrivacy }) => 
       <section className="bg-[#0B192C] text-white py-16 sm:py-20 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-10 bg-[radial-gradient(#DC2626_1px,transparent_1px)] [background-size:16px_16px]" />
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-xs font-semibold text-red-400 mb-4 tracking-wider uppercase">
-            <Mail size={14} />
-            <span>Atención Comercial</span>
-          </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
             Contacto & <span className="text-[#DC2626]">Solicitudes</span>
           </h1>
