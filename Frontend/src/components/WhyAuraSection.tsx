@@ -36,14 +36,14 @@ export const WhyAuraSection: React.FC = () => {
 
   return (
     <section id="por-que-aura" className="relative overflow-hidden py-24 text-white">
-      {/* Background Image with Dark Professional Overlay */}
+      {/* Background Image with Balanced Overlay */}
       <div className="absolute inset-0 z-0">
         <img
           src={whyAuraBg}
           alt="Por qué elegir Aura Corporativa"
-          className="w-full h-full object-cover object-center"
+          className="w-full h-full object-cover object-center brightness-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#081526]/90 via-[#0B192C]/95 to-[#081526]/95" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#081526]/50 via-[#0B192C]/65 to-[#081526]/60" />
       </div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
