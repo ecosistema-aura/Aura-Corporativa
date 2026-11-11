@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "set-domain": "node scripts/actualizar-dominio.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },

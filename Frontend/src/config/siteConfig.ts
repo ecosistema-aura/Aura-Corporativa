@@ -3,6 +3,7 @@
  * Reemplaza los valores de este archivo con la información oficial del cliente.
  */
 export const siteConfig = {
+  domain: 'https://auracorporativa.pe', // Reemplazar con el dominio oficial definitivo al adquirirlo
   company: {
     name: 'Aura Corporativa',
     legalName: 'ZWE CORPORATIVA S.A.C.',

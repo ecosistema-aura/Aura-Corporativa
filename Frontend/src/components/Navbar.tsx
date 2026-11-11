@@ -16,7 +16,6 @@ export const Navbar: React.FC<NavbarProps> = ({ isMenuOpen, onMenuToggle }) => {
 
   const isHome = location.pathname === '/';
   const isServicios = location.pathname === '/servicios';
-  const isPorQueAura = location.pathname === '/por-que-aura';
   const isNosotros = location.pathname === '/nosotros';
   const isBlog = location.pathname === '/blog' || location.pathname.startsWith('/blog/');
   const isFaq = location.pathname === '/faq';
@@ -85,14 +84,6 @@ export const Navbar: React.FC<NavbarProps> = ({ isMenuOpen, onMenuToggle }) => {
             className={navItemClass(isServicios)}
           >
             Servicios
-          </Link>
-
-          <Link
-            to="/por-que-aura"
-            onClick={() => handleToggle(false)}
-            className={navItemClass(isPorQueAura)}
-          >
-            ¿Por qué Aura?
           </Link>
 
           <Link
@@ -172,14 +163,6 @@ export const Navbar: React.FC<NavbarProps> = ({ isMenuOpen, onMenuToggle }) => {
                 className={mobileItemClass(isServicios)}
               >
                 <span>Servicios</span>
-              </Link>
-
-              <Link
-                to="/por-que-aura"
-                onClick={() => handleToggle(false)}
-                className={mobileItemClass(isPorQueAura)}
-              >
-                <span>¿Por qué Aura?</span>
               </Link>
 
               <Link

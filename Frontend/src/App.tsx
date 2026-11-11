@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { LandingPage } from './pages/LandingPage';
 import { ServiciosPage } from './pages/ServiciosPage';
-import { PorQueAuraPage } from './pages/PorQueAuraPage';
+// PorQueAuraPage unificada dentro de NosotrosPage
 import { NosotrosPage } from './pages/NosotrosPage';
 import { BlogPage } from './pages/BlogPage';
 import { BlogAdminPage } from './pages/BlogAdminPage';
@@ -17,7 +17,10 @@ import type { LegalModalType } from './components/LegalModal';
 import { scrollToElementAnimated } from './utils/scrollUtils';
 import { initScrollReveal } from './utils/scrollReveal';
 
+import { useSeo } from './utils/useSeo';
+
 function RouteNavigationHandler() {
+  useSeo();
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
@@ -55,7 +58,7 @@ function AnimatedRoutes({ onOpenPrivacy }: { onOpenPrivacy: () => void }) {
       <Routes location={location}>
         <Route path="/" element={<LandingPage onOpenPrivacy={onOpenPrivacy} />} />
         <Route path="/servicios" element={<ServiciosPage />} />
-        <Route path="/por-que-aura" element={<PorQueAuraPage />} />
+        <Route path="/por-que-aura" element={<Navigate to="/nosotros" replace />} />
         <Route path="/nosotros" element={<NosotrosPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogPage />} />

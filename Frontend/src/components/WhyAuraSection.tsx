@@ -1,94 +1,113 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { DollarSign, ShieldCheck, Target, Clock } from 'lucide-react';
-import whyAuraBg from '../assets/por_que_aura.jpg';
+import { DollarSign, ShieldCheck, Target, Clock, ArrowRight } from 'lucide-react';
 
-export const WhyAuraSection: React.FC = () => {
+interface WhyAuraSectionProps {
+  showTitle?: boolean;
+  theme?: 'light' | 'dark';
+}
+
+export const WhyAuraSection: React.FC<WhyAuraSectionProps> = ({ 
+  showTitle = false, 
+  theme = 'light' 
+}) => {
+  const isDark = theme === 'dark';
+
   const metrics = [
-    { value: '100%', label: 'Cumplimiento Legal', sub: 'Sunafil & Sunat' },
-    { value: '+98%', label: 'Satisfacción', sub: 'En servicios B2B' },
-    { value: '24-48h', label: 'Respuesta Operativa', sub: 'Atención continua' },
-    { value: '0%', label: 'Contingencias', sub: 'Blindaje integral' },
+    { value: '100%', label: 'Cumplimiento Legal', sub: 'Sunafil & Sunat al día' },
+    { value: '+98%', label: 'Satisfacción B2B', sub: 'Servicios continuos' },
+    { value: '24-48h', label: 'Respuesta Operativa', sub: 'Atención y reemplazos' },
+    { value: '0%', label: 'Contingencias', sub: 'Blindaje integral formal' },
   ];
 
   const pillars = [
     {
       icon: DollarSign,
-      title: 'Ahorro Operativo y Eficiencia',
-      desc: 'Optimizamos tus recursos y reducimos costos fijos de nómina, contratación e infraestructura con presupuestos claros y transparentes.',
+      title: 'Ahorro Operativo & Eficiencia',
+      desc: 'Optimizamos sus recursos y reducimos costos fijos de nómina, contratación e infraestructura con presupuestos claros, predecibles y sin sobrecostos.',
     },
     {
       icon: ShieldCheck,
-      title: 'Respaldo Legal y Blindaje Tributario',
-      desc: 'Supervisión rigurosa de contratos laborales y aportes de ley, asegurando cero contingencias y total tranquilidad ante Sunafil y Sunat.',
+      title: 'Respaldo Legal & Blindaje Tributario',
+      desc: 'Supervisión rigurosa de contratos laborales y aportes de ley, asegurando cero contingencias y total tranquilidad jurídica ante fiscalizaciones de Sunafil.',
     },
     {
       icon: Target,
       title: 'Enfoque Estratégico del Negocio',
-      desc: 'Liberamos la carga operativa del personal para que tu equipo directivo se concentre al 100% en la rentabilidad y el crecimiento comercial.',
+      desc: 'Liberamos a su equipo directivo de la carga operativa para que se concentre al 100% en la rentabilidad comercial y el crecimiento de su empresa.',
     },
     {
       icon: Clock,
-      title: 'Atención Ágil y Cobertura Continua',
-      desc: 'Ejecutivos de cuenta asignados con monitoreo permanente y resolución inmediata de incidencias para que tus operaciones nunca se detengan.',
+      title: 'Atención Ágil & Cobertura Continua',
+      desc: 'Ejecutivos de cuenta asignados con monitoreo permanente y resolución inmediata de incidencias para asegurar que sus operaciones nunca se detengan.',
     },
   ];
 
   return (
-    <section id="por-que-aura" className="relative overflow-hidden py-24 text-white">
-      {/* Background Image with Balanced Overlay */}
-      <div className="absolute inset-0 z-0">
-        <img
-          src={whyAuraBg}
-          alt="Por qué elegir Aura Corporativa"
-          className="w-full h-full object-cover object-center brightness-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#081526]/50 via-[#0B192C]/65 to-[#081526]/60" />
-      </div>
+    <section 
+      id="por-que-aura" 
+      className={`relative overflow-hidden py-20 lg:py-28 border-b ${
+        isDark ? 'bg-[#071321] text-white border-slate-800' : 'bg-white text-slate-800 border-slate-200'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Title opcional */}
+        {showTitle && (
+          <div className="text-center mb-16 reveal-up">
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <span className="h-0.5 w-10 bg-[#DC2626]" />
+              <span className={`text-xs sm:text-sm font-semibold tracking-wider uppercase ${isDark ? 'text-slate-300' : 'text-slate-500'}`}>
+                Propuesta de Valor
+              </span>
+              <span className="h-0.5 w-10 bg-[#DC2626]" />
+            </div>
+            <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              ¿Por qué elegir <span className="text-[#DC2626]">Aura Corporativa</span>?
+            </h2>
+            <p className={`mt-4 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed font-normal ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+              Ventajas estratégicas comprobadas que protegen su operación y potencian la productividad de su organización.
+            </p>
+          </div>
+        )}
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Title */}
-        <div className="text-center mb-14 reveal-up">
-          <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-[#DC2626]" />
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
-            ¿Por qué elegir <span className="text-[#DC2626]">Aura Corporativa</span>?
-          </h2>
-          <p className="mt-4 text-base sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Ventajas estratégicas comprobadas que protegen tu operación y potencian la productividad de tu organización.
-          </p>
-        </div>
-
-        {/* 1. Concise Metrics Strip */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-16 pb-10 border-b border-white/10 reveal-stagger">
+        {/* 1. Métricas Corporativas (Grandes y Espaciosas, sin cards apretadas) */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-16 pb-14 border-b border-slate-200/80 reveal-stagger">
           {metrics.map((m, index) => (
-            <div key={index} className="text-center reveal-up">
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#DC2626] tracking-tight">
+            <div 
+              key={index} 
+              className={`text-left p-6 sm:p-8 rounded-xl border transition-all reveal-up ${
+                isDark 
+                  ? 'bg-white/5 border-white/10' 
+                  : 'bg-slate-50/80 border-slate-200 hover:border-slate-300 hover:shadow-md'
+              }`}
+            >
+              <div className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#DC2626] tracking-tight">
                 {m.value}
               </div>
-              <div className="text-sm sm:text-base font-bold text-white mt-1">
+              <div className={`text-base font-bold mt-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 {m.label}
               </div>
-              <div className="text-xs text-slate-400 mt-0.5">
+              <div className={`text-xs sm:text-sm mt-1 font-normal ${isDark ? 'text-slate-300' : 'text-slate-500'}`}>
                 {m.sub}
               </div>
             </div>
           ))}
         </div>
 
-        {/* 2. Structured Information in Paragraphs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 mb-16 reveal-stagger">
+        {/* 2. Cuatro Pilares Estratégicos en Distribución Amplia */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 mb-16 reveal-stagger">
           {pillars.map((item, index) => {
             const Icon = item.icon;
             return (
-              <div key={index} className="flex items-start gap-4 sm:gap-5 text-left reveal-up">
-                <div className="w-12 h-12 rounded-xl bg-[#DC2626]/20 border border-[#DC2626]/40 text-[#DC2626] flex items-center justify-center shrink-0 mt-1">
-                  <Icon size={24} />
+              <div key={index} className="flex items-start gap-5 text-left reveal-up">
+                <div className="w-14 h-14 rounded-xl bg-red-600/10 border border-red-500/20 text-[#DC2626] flex items-center justify-center shrink-0 mt-1">
+                  <Icon size={26} />
                 </div>
                 <div>
-                  <h3 className="text-lg sm:text-xl font-bold text-white mb-2 flex items-center gap-2">
-                    <span>{item.title}</span>
+                  <h3 className={`text-xl font-bold mb-2.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    {item.title}
                   </h3>
-                  <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
+                  <p className={`text-sm sm:text-base leading-relaxed font-normal ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
                     {item.desc}
                   </p>
                 </div>
@@ -97,21 +116,26 @@ export const WhyAuraSection: React.FC = () => {
           })}
         </div>
 
-        {/* 3. Bottom Assurance Callout */}
-        <div className="bg-[#0B192C]/90 text-white rounded-3xl p-8 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl border border-white/10 backdrop-blur-md reveal-up delay-2">
-          <div className="max-w-2xl text-center md:text-left">
-            <h4 className="text-xl sm:text-2xl font-bold mb-2">
-              Transformamos la gestión de talento en una ventaja competitiva
+        {/* 3. Bloque de Compromiso Corporativo Ancho */}
+        <div className={`rounded-xl p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-8 border shadow-xl reveal-up ${
+          isDark 
+            ? 'bg-[#0A1828] border-white/15' 
+            : 'bg-[#071321] text-white border-slate-800'
+        }`}>
+          <div className="max-w-3xl text-left">
+            <h4 className="text-2xl sm:text-3xl font-extrabold text-white mb-2 leading-tight">
+              Transformamos la gestión de personal en una ventaja competitiva
             </h4>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              Diseñamos propuestas a la medida de tu sector y volumen de colaboradores, garantizando continuidad y tranquilidad.
+            <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal">
+              Diseñamos propuestas a la medida de su sector y volumen de colaboradores, garantizando continuidad operativa y tranquilidad legal.
             </p>
           </div>
           <Link
             to="/contacto"
-            className="shrink-0 inline-flex items-center justify-center px-6 py-3.5 bg-[#DC2626] hover:bg-red-700 text-white font-bold text-sm rounded-xl shadow-md transition-all active:scale-95 cursor-pointer"
+            className="shrink-0 inline-flex items-center gap-2 px-8 py-4 bg-[#DC2626] hover:bg-red-700 active:scale-95 text-white font-bold text-base rounded-md transition-all shadow-md cursor-pointer"
           >
-            Solicitar Asesoría
+            <span>Solicitar Asesoría</span>
+            <ArrowRight size={18} />
           </Link>
         </div>
       </div>
@@ -120,5 +144,3 @@ export const WhyAuraSection: React.FC = () => {
 };
 
 export default WhyAuraSection;
-
-
