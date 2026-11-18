@@ -55,8 +55,13 @@ export const ServicesSection: React.FC = () => {
             <div
               key={service.id}
               id={service.id}
-              className="w-full grid grid-cols-1 lg:grid-cols-2 items-stretch min-h-[540px] lg:min-h-[640px] border-b border-slate-800 last:border-b-0"
+              className="w-full grid grid-cols-1 lg:grid-cols-2 items-stretch min-h-[540px] lg:min-h-[640px] border-b border-slate-800 last:border-b-0 scroll-mt-24 relative"
             >
+              {/* Anclas alternativas para soporte de slugs y enlaces directos */}
+              {service.id === 'tercerizacion-personal' && <span id="tercerizacion" className="absolute -top-24" />}
+              {service.id === 'administracion-planillas' && <span id="planillas" className="absolute -top-24" />}
+              {service.id === 'gestion-integral-personal' && <span id="reclutamiento" className="absolute -top-24" />}
+              {service.id === 'soporte-administrativo' && <span id="intermediacion" className="absolute -top-24" />}
               {/* Mitad 1: Fotografía Panorámica Full-Bleed (50% de Pantalla) */}
               <div
                 className={`relative w-full h-80 sm:h-96 lg:h-full min-h-[340px] lg:min-h-[640px] overflow-hidden ${

@@ -28,10 +28,10 @@ export const siteConfig = {
     },
     address: {
       city: 'Lima, Perú',
-      detail: 'Jesús María, Lima - Perú',
+      detail: 'Av. Del Aire 837, San Luis, Lima - Perú',
       coverage: 'Cobertura a nivel nacional',
-      googleMapsEmbed: 'https://maps.google.com/maps?q=-12.0836579,-77.0449196&hl=es&z=17&output=embed',
-      googleMapsUrl: 'https://maps.app.goo.gl/pNFG3zjYk7QExEek6',
+      googleMapsEmbed: 'https://maps.google.com/maps?q=-12.0822863,-77.0074403&hl=es&z=17&output=embed',
+      googleMapsUrl: 'https://www.google.com/maps?q=-12.0822863,-77.0074403',
     },
     advisor: {
       name: 'Asesoría Corporativa',

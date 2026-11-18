@@ -389,7 +389,7 @@ export const NosotrosPage: React.FC = () => {
           </div>
 
           {/* Acordeón Horizontal Dinámico / Tarjetas Interactivas de Gran Cobertura */}
-          <div className="flex flex-col lg:flex-row gap-5 min-h-0 lg:min-h-[440px] items-stretch reveal-stagger">
+          <div className="flex flex-col lg:flex-row gap-5 min-h-0 lg:min-h-[440px] items-stretch reveal-up">
             {pillarsData.map((pilar, index) => {
               const Icon = pilar.icon;
               const isActive = activePillar === index;
@@ -399,7 +399,7 @@ export const NosotrosPage: React.FC = () => {
                   key={index}
                   onMouseEnter={() => setActivePillar(index)}
                   onClick={() => setActivePillar(index)}
-                  className={`reveal-up relative overflow-hidden cursor-default lg:cursor-pointer transition-all duration-500 ease-out border flex flex-col justify-between select-none p-6 sm:p-8 rounded-2xl shadow-xs ${
+                  className={`relative overflow-hidden cursor-pointer transition-all duration-500 ease-out border flex flex-col justify-between select-none p-6 sm:p-8 rounded-2xl shadow-xs ${
                     isActive
                       ? 'bg-gradient-to-br from-[#0B192C] via-[#0E2238] to-[#162D45] text-white border-[#DC2626] shadow-2xl lg:flex-[2.5]'
                       : 'bg-slate-50/80 hover:bg-slate-100 text-slate-800 border-slate-200 lg:flex-1'
