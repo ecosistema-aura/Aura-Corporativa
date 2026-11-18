@@ -45,7 +45,7 @@ export const ServicesSection: React.FC = () => {
       </div>
 
       {/* Bloques Edge-to-Edge 50/50 a Pantalla Completa (Inspirado exactamente en Grupo Solimano #Servicios) */}
-      <div className="w-full overflow-hidden">
+      <div className="w-full overflow-hidden border-t-2 lg:border-t-4 border-[#DC2626]">
         {servicesData.map((service, index) => {
           const isEven = index % 2 === 0;
           const serviceImg = serviceImages[service.id] || imgTercerizacionOperativa;
@@ -55,7 +55,7 @@ export const ServicesSection: React.FC = () => {
             <div
               key={service.id}
               id={service.id}
-              className="w-full grid grid-cols-1 lg:grid-cols-2 items-stretch min-h-[540px] lg:min-h-[640px] border-b border-slate-800 last:border-b-0 scroll-mt-24 relative"
+              className="w-full grid grid-cols-1 lg:grid-cols-2 items-stretch min-h-[540px] lg:min-h-[640px] border-b-2 lg:border-b-4 border-[#DC2626] scroll-mt-24 relative"
             >
               {/* Anclas alternativas para soporte de slugs y enlaces directos */}
               {service.id === 'tercerizacion-personal' && <span id="tercerizacion" className="absolute -top-24" />}
