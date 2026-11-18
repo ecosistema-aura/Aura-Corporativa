@@ -8,7 +8,6 @@ import {
   FileSpreadsheet,
   ArrowRight,
   MapPin,
-  CheckCircle2,
   Building2,
   Truck,
   ShoppingBag,
@@ -28,71 +27,47 @@ interface LandingPageProps {
 }
 
 export const LandingPage: React.FC<LandingPageProps> = () => {
-  // 1. Servicios Principales en Formato Editorial Amplio (Sin Cards, Abarcando Pantalla)
+  // 1. Servicios Principales en Formato Resumido y Esencial (Preservando Imágenes con Enlace Directo a Servicios)
   const coreServices = [
     {
-      id: 'tercerizacion',
+      id: 'tercerizacion-personal',
       number: '01',
       category: 'Outsourcing Operativo',
-      title: 'Tercerización Operativa de Procesos',
-      desc: 'Externalización estratégica de funciones críticas en almacenes, centros de distribución, retail y plantas de producción. Asumimos la gestión integral con supervisión permanente en terreno y dotación de EPP.',
+      title: 'Tercerización de Personal',
+      desc: 'Externalización estratégica y supervisión en sede de personal calificado para almacenes, logística y plantas industriales.',
       image: cardTercerizacion,
       icon: Briefcase,
-      bullets: [
-        'Personal calificado para almacenes, estiba y picking',
-        'Supervisores dedicados y control de turnos en sede',
-        'Cumplimiento integral de protocolos de SST y entrega de EPPs',
-        'Continuidad operativa con reemplazos en tiempo récord'
-      ],
-      link: '/servicios'
+      link: '/servicios#tercerizacion-personal'
     },
     {
-      id: 'intermediacion',
+      id: 'administracion-planillas',
       number: '02',
-      category: 'Dotación Formal • Ley N° 27626',
-      title: 'Intermediación Laboral Especializada',
-      desc: 'Suministro ágil y formal de personal temporal, complementario o de suplencia bajo estricto cumplimiento del marco legal peruano, eliminando contingencias laborales y sobrecostos de contratación.',
-      image: intermediacionFormal,
-      icon: ShieldCheck,
-      bullets: [
-        '100% blindaje normativo ante fiscalizaciones de Sunafil',
-        'Contratos registrados formalmente en el Ministerio de Trabajo',
-        'Absorción de picos de demanda y proyectos estacionales',
-        'Cero pasivos laborales acumulados para su empresa'
-      ],
-      link: '/servicios'
-    },
-    {
-      id: 'planillas',
-      number: '03',
-      category: 'Payroll & T-Registro',
-      title: 'Administración Integral de Planillas',
-      desc: 'Procesamiento confidencial y riguroso de la nómina mensual. Nuestro equipo especializado calcula haberes, aportes de ley y liquidaciones para que su administración opere con absoluta tranquilidad.',
+      category: 'Payroll & Nóminas',
+      title: 'Administración de Planillas',
+      desc: 'Cálculo confidencial de haberes, beneficios de ley y declaraciones ante Sunat y AFPnet con cero contingencias laborales.',
       image: cardBlogNoticias,
       icon: FileSpreadsheet,
-      bullets: [
-        'Cálculo exacto de boletas, CTS, gratificaciones y vacaciones',
-        'Declaración mensual de PLAME, AFPnet y T-Registro ante Sunat',
-        'Gestión de subsidios, descansos médicos y aportes de EsSalud',
-        'Auditoría y asesoría jurídica laboral continua'
-      ],
-      link: '/servicios'
+      link: '/servicios#administracion-planillas'
     },
     {
-      id: 'reclutamiento',
-      number: '04',
-      category: 'Capital Humano Calificado',
-      title: 'Reclutamiento & Gestión de Personal',
-      desc: 'Atracción acelerada del talento operativo, técnico y administrativo idóneo para su empresa. Aplicamos filtros rigurosos de antecedentes, pruebas de idoneidad y entrevistas por competencias.',
+      id: 'gestion-integral-personal',
+      number: '03',
+      category: 'Capital Humano & Selección',
+      title: 'Gestión Integral del Personal',
+      desc: 'Atracción ágil de talento calificado, gestión de legajos y acompañamiento continuo en todo el ciclo laboral del colaborador.',
       image: cardEquipoNosotros,
       icon: Users,
-      bullets: [
-        'Validación de antecedentes penales, judiciales y policiales',
-        'Evaluación psicotécnica y verificación de referencias laborales',
-        'Banco de talento activo y listo para ser desplegado',
-        'Proceso de inducción e integración coordinada al puesto'
-      ],
-      link: '/servicios'
+      link: '/servicios#gestion-integral-personal'
+    },
+    {
+      id: 'soporte-administrativo',
+      number: '04',
+      category: 'Eficiencia Operativa',
+      title: 'Soporte Administrativo',
+      desc: 'Gestión documentaria rigurosa, archivo de contratos y control de procesos para optimizar los tiempos de su empresa.',
+      image: intermediacionFormal,
+      icon: ShieldCheck,
+      link: '/servicios#soporte-administrativo'
     }
   ];
 
@@ -245,108 +220,87 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
       </section>
 
       {/* =========================================================================
-          3. LÍNEAS DE ESPECIALIZACIÓN (INTERCALADO: FONDO AZUL OSCURO, SIN CARDS,
-             ABARCANDO MÁS PANTALLA EN FORMATO EDITORIAL AMPLIO)
+          3. LÍNEAS DE ESPECIALIDAD (REDISEÑO CONCISO: IMÁGENES PRESERVADAS, 
+             CONTENIDO ESENCIAL RESUMIDO Y BOTONES DIRECTOS HACIA SERVICIOS)
          ========================================================================= */}
-      <section className="py-20 lg:py-28 bg-[#071321] text-white border-b border-slate-800">
+      <section id="lineas-especialidad" className="py-20 lg:py-24 bg-[#071321] text-white border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Encabezado Principal */}
-          <div className="max-w-3xl mb-16 text-left reveal-up">
+          <div className="max-w-3xl mb-12 sm:mb-16 text-left reveal-up">
             <div className="flex items-center gap-3 mb-3">
               <span className="h-0.5 w-10 bg-[#DC2626]" />
               <span className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-slate-300">
-                Líneas de Especialización
+                Líneas de Especialidad
               </span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
               Servicios Diseñados para Impulsar su <span className="text-[#DC2626]">Rentabilidad</span>
             </h2>
             <p className="mt-4 text-base sm:text-lg text-slate-300 max-w-2xl font-normal leading-relaxed">
-              Estructuramos modelos operativos directos y flexibles para delegar personal operativo y nóminas con absoluta seguridad jurídica.
+              Modelos operativos ágiles y flexibles para delegar personal y nóminas con absoluta seguridad jurídica.
             </p>
           </div>
 
-          {/* Filas Alternadas Amplias (Abarcan toda la pantalla, sin encasillar en cards) */}
-          <div className="space-y-16 lg:space-y-24">
-            {coreServices.map((service, index) => {
+          {/* Grid Ejecutivo 2x2: Imágenes preservadas, contenido esencial resumido y botones directos */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+            {coreServices.map((service) => {
               const Icon = service.icon;
-              const isEven = index % 2 === 0;
 
               return (
                 <div
                   key={service.id}
-                  className={`grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center pb-16 lg:pb-20 border-b border-white/10 last:border-b-0 last:pb-0 reveal-up`}
+                  className="group rounded-2xl overflow-hidden bg-slate-900/60 border border-white/10 hover:border-red-500/40 hover:shadow-2xl hover:shadow-red-950/20 transition-all duration-300 flex flex-col reveal-up"
                 >
-                  {/* Columna de Imagen Amplia */}
-                  <div className={`lg:col-span-6 ${isEven ? 'lg:order-1' : 'lg:order-2'}`}>
-                    <div className="relative rounded-xl overflow-hidden shadow-2xl border border-white/15 group h-72 sm:h-88 lg:h-[420px] bg-slate-900">
-                      <img
-                        src={service.image}
-                        alt={service.title}
-                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                        loading="lazy"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#071321]/90 via-transparent to-transparent" />
-                      
-                      <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between text-white">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-md bg-[#DC2626] text-white flex items-center justify-center shadow-md">
-                            <Icon size={20} />
-                          </div>
-                          <div>
-                            <span className="text-xs uppercase font-extrabold tracking-wider text-red-400 block">
-                              {service.category}
-                            </span>
-                            <span className="text-sm font-bold text-white">
-                              {service.title}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  {/* Contenedor de Imagen con Overlay y Badges */}
+                  <div className="relative h-60 sm:h-72 overflow-hidden bg-slate-950">
+                    <img
+                      src={service.image}
+                      alt={service.title}
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#071321] via-transparent to-transparent opacity-90" />
 
-                  {/* Columna de Contenido Editorial Extendido */}
-                  <div className={`lg:col-span-6 text-left ${isEven ? 'lg:order-2' : 'lg:order-1'}`}>
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="text-2xl lg:text-3xl font-black text-[#DC2626]">
+                    {/* Badges superiores: Número y Categoría */}
+                    <div className="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none">
+                      <span className="px-3 py-1 rounded-md bg-[#071321]/80 backdrop-blur-md border border-white/15 text-xs font-bold text-white tracking-widest">
                         {service.number}
                       </span>
-                      <span className="h-px w-8 bg-white/20" />
-                      <span className="text-xs uppercase font-bold tracking-widest text-slate-400">
+                      <span className="px-3 py-1 rounded-md bg-[#DC2626] text-white text-[11px] font-bold tracking-wider uppercase shadow-sm">
                         {service.category}
                       </span>
                     </div>
 
-                    <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight mb-4">
-                      {service.title}
-                    </h3>
+                    {/* Ícono de especialidad */}
+                    <div className="absolute bottom-4 left-5 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-[#DC2626] text-white flex items-center justify-center shadow-md">
+                        <Icon size={20} />
+                      </div>
+                    </div>
+                  </div>
 
-                    <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-normal mb-6">
-                      {service.desc}
-                    </p>
-
-                    {/* Viñetas con Check */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
-                      {service.bullets.map((item, bIdx) => (
-                        <div key={bIdx} className="flex items-start gap-2.5">
-                          <CheckCircle2 size={18} className="text-[#DC2626] shrink-0 mt-0.5" />
-                          <span className="text-xs sm:text-sm text-slate-200 font-medium leading-snug">
-                            {item}
-                          </span>
-                        </div>
-                      ))}
+                  {/* Contenido Esencial Resumido */}
+                  <div className="p-6 sm:p-8 flex flex-col grow justify-between bg-[#071321]">
+                    <div>
+                      <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight leading-snug mb-2.5 group-hover:text-red-400 transition-colors">
+                        {service.title}
+                      </h3>
+                      <p className="text-sm sm:text-base text-slate-300 font-normal leading-relaxed mb-6">
+                        {service.desc}
+                      </p>
                     </div>
 
-                    {/* Botón de Acción Directo */}
-                    <Link
-                      to={service.link}
-                      className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#DC2626] hover:bg-red-700 active:scale-95 text-white font-bold text-sm rounded-md transition-all shadow-md cursor-pointer"
-                    >
-                      <span>Cotizar Servicio</span>
-                      <ArrowRight size={16} />
-                    </Link>
+                    {/* Botón directo a la sección respectiva en Servicios */}
+                    <div className="pt-4 border-t border-white/10">
+                      <Link
+                        to={service.link}
+                        className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3.5 bg-[#DC2626] hover:bg-red-700 active:scale-95 text-white font-bold text-sm rounded-md transition-all shadow-md group/btn cursor-pointer"
+                      >
+                        <span>Ver en Servicios</span>
+                        <ArrowRight size={16} className="transform group-hover/btn:translate-x-1 transition-transform" />
+                      </Link>
+                    </div>
                   </div>
                 </div>
               );
