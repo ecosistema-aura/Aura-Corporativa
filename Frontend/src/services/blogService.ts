@@ -95,11 +95,11 @@ export const blogService = {
 
   async getPublishedPosts(): Promise<BlogPost[]> {
     try {
-      // Filtrar estrictamente por empresa = 'aura'
+      // Filtrar posts visibles para Aura ('aura', 'ambas', 'todas' o sin asignar)
       const { data, error } = await supabase
         .from('posts')
         .select('*')
-        .eq('empresa', 'aura')
+        .or('empresa.eq.aura,empresa.eq.ambas,empresa.eq.todas,empresa.is.null')
         .order('id', { ascending: false });
 
       if (error) {
@@ -169,7 +169,26 @@ export const blogService = {
   },
 
   async getAdminPosts(_token?: string): Promise<BlogPost[]> {
-    return this.getPublishedPosts();
+    try {
+      const { data, error } = await supabase
+        .from('posts')
+        .select('*')
+        .order('id', { ascending: false });
+
+      if (error) {
+        console.warn('Error consultando Supabase posts admin:', error.message);
+        return defaultPosts;
+      }
+
+      if (data && data.length > 0) {
+        return data.map(normalizePost);
+      }
+
+      return defaultPosts;
+    } catch (err) {
+      console.warn('Fallo de conexión en getAdminPosts:', err);
+      return defaultPosts;
+    }
   },
 
   async createPost(_token: string, payload: BlogPostPayload): Promise<BlogPost> {
@@ -180,7 +199,7 @@ export const blogService = {
       desc: payload.desc.trim(),
       image: payload.image.trim() || 'tercerizacion_personal.png',
       link: payload.link?.trim() || null,
-      empresa: 'aura',
+      empresa: payload.empresa || 'ambas',
     };
 
     const { data, error } = await supabase
@@ -204,7 +223,7 @@ export const blogService = {
       desc: payload.desc.trim(),
       image: payload.image.trim() || 'tercerizacion_personal.png',
       link: payload.link?.trim() || null,
-      empresa: 'aura',
+      empresa: payload.empresa || 'ambas',
     };
 
     const { data, error } = await supabase

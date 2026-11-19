@@ -46,6 +46,7 @@ interface PostFormData {
   desc: string;
   image: string;
   link: string;
+  empresa: string;
 }
 
 function emptyForm(): PostFormData {
@@ -56,6 +57,7 @@ function emptyForm(): PostFormData {
     desc: '',
     image: '',
     link: '',
+    empresa: 'ambas',
   };
 }
 
@@ -73,6 +75,7 @@ export function BlogAdminPage() {
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
   const [search, setSearch] = useState('');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('Todas');
+  const [selectedCompanyFilter, setSelectedCompanyFilter] = useState('Todas');
 
   // Mensajes de feedback
   const [toastMessage, setToastMessage] = useState('');
@@ -103,7 +106,7 @@ export function BlogAdminPage() {
   const loadPosts = async () => {
     setIsLoadingPosts(true);
     try {
-      const data = await blogService.getPublishedPosts();
+      const data = await blogService.getAdminPosts();
       setPosts(data);
     } catch (err: any) {
       showToast('Error al cargar noticias: ' + (err.message || 'Error desconocido'), 'error');
@@ -121,7 +124,7 @@ export function BlogAdminPage() {
         if (!isMounted) return;
         setAdmin(user);
         setStatus('signedIn');
-        return blogService.getPublishedPosts();
+        return blogService.getAdminPosts();
       })
       .then((data) => {
         if (isMounted && data) setPosts(data);
@@ -150,14 +153,17 @@ export function BlogAdminPage() {
       const matchesCategory =
         selectedCategoryFilter === 'Todas' ||
         post.category.toLowerCase() === selectedCategoryFilter.toLowerCase();
+      const matchesCompany =
+        selectedCompanyFilter === 'Todas' ||
+        (post.empresa || 'ambas').toLowerCase() === selectedCompanyFilter.toLowerCase();
       const matchesSearch =
         !normalizedSearch ||
         post.title.toLowerCase().includes(normalizedSearch) ||
         post.desc.toLowerCase().includes(normalizedSearch);
 
-      return matchesCategory && matchesSearch;
+      return matchesCategory && matchesCompany && matchesSearch;
     });
-  }, [posts, search, selectedCategoryFilter]);
+  }, [posts, search, selectedCategoryFilter, selectedCompanyFilter]);
 
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -217,6 +223,7 @@ export function BlogAdminPage() {
       desc: post.desc,
       image: post.image || '',
       link: post.link || '',
+      empresa: post.empresa || 'ambas',
     });
     setSelectedFile(null);
     setImagePreview(blogService.getImageUrl(post.image));
@@ -277,6 +284,7 @@ export function BlogAdminPage() {
         desc: postForm.desc.trim(),
         image: finalImageUrl,
         link: postForm.link.trim() || undefined,
+        empresa: postForm.empresa || 'ambas',
       };
 
       if (isEditing && postForm.id) {
@@ -479,6 +487,30 @@ export function BlogAdminPage() {
                 </option>
               ))}
             </select>
+
+            {/* Filtro de Empresa / Destino */}
+            <select
+              value={selectedCompanyFilter}
+              onChange={(event) => setSelectedCompanyFilter(event.target.value)}
+              className="rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 outline-none transition focus:border-[#0B192C]"
+            >
+              <option value="Todas">Todos los destinos</option>
+              <option value="ambas">Ambas webs</option>
+              <option value="aura">Solo Aura</option>
+              <option value="zwe">Solo ZWE</option>
+            </select>
+
+            {/* Filtro de Destino (Empresa) */}
+            <select
+              value={selectedCompanyFilter}
+              onChange={(event) => setSelectedCompanyFilter(event.target.value)}
+              className="rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 outline-none transition focus:border-[#0B192C]"
+            >
+              <option value="Todas">Todos los destinos</option>
+              <option value="ambas">Ambas webs</option>
+              <option value="aura">Solo Aura</option>
+              <option value="zwe">Solo ZWE</option>
+            </select>
           </div>
 
           {/* Botón Nueva Noticia */}
@@ -563,6 +595,37 @@ export function BlogAdminPage() {
                   />
                   <span className="absolute top-3 right-3 rounded bg-[#0B192C]/90 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white shadow-2xs">
                     {post.category}
+                  </span>
+                  {/* Badge de Empresa / Destino */}
+                  <span
+                    className={`absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-bold text-white shadow-xs ${
+                      (post.empresa || 'ambas') === 'ambas'
+                        ? 'bg-emerald-600/90'
+                        : (post.empresa || 'ambas') === 'zwe'
+                        ? 'bg-sky-600/90'
+                        : 'bg-indigo-600/90'
+                    }`}
+                  >
+                    {(post.empresa || 'ambas') === 'ambas'
+                      ? '🌐 Ambas webs'
+                      : (post.empresa || 'ambas') === 'zwe'
+                      ? '🏢 Solo ZWE'
+                      : '💼 Solo Aura'}
+                  </span>
+                  <span
+                    className={`absolute bottom-3 left-3 rounded px-2.5 py-1 text-[11px] font-bold text-white shadow-2xs backdrop-blur-xs ${
+                      (post.empresa || 'ambas') === 'ambas'
+                        ? 'bg-emerald-600/90'
+                        : (post.empresa || 'ambas') === 'zwe'
+                          ? 'bg-sky-600/90'
+                          : 'bg-purple-600/90'
+                    }`}
+                  >
+                    {(post.empresa || 'ambas') === 'ambas'
+                      ? '🌐 Ambas webs'
+                      : (post.empresa || 'ambas') === 'zwe'
+                        ? '🏢 Solo ZWE'
+                        : '💼 Solo Aura'}
                   </span>
                 </div>
 
@@ -708,6 +771,42 @@ export function BlogAdminPage() {
                     className="mt-1.5 w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0B192C] focus:ring-1 focus:ring-[#0B192C]"
                   />
                 </div>
+              </div>
+
+              {/* Destino de Publicación (Visibilidad) */}
+              <div>
+                <label htmlFor="postEmpresa" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                  Publicar en (Visibilidad) <span className="text-red-500">*</span>
+                </label>
+                <select
+                  id="postEmpresa"
+                  required
+                  value={postForm.empresa}
+                  onChange={(e) => setPostForm({ ...postForm, empresa: e.target.value })}
+                  className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0B192C]"
+                >
+                  <option value="ambas">🌐 Ambas páginas (ZWE y Aura Corporativa) - Recomendado</option>
+                  <option value="aura">💼 Solo Aura Corporativa</option>
+                  <option value="zwe">🏢 Solo ZWE Corporativa</option>
+                </select>
+              </div>
+
+              {/* Destino de Publicación (Empresa / Visibilidad) */}
+              <div>
+                <label htmlFor="postEmpresa" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                  Publicar en (Visibilidad) <span className="text-red-500">*</span>
+                </label>
+                <select
+                  id="postEmpresa"
+                  required
+                  value={postForm.empresa || 'ambas'}
+                  onChange={(e) => setPostForm({ ...postForm, empresa: e.target.value })}
+                  className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0B192C]"
+                >
+                  <option value="ambas">🌐 Ambas páginas (Aura Corporativa y ZWE) - Recomendado</option>
+                  <option value="aura">💼 Solo Aura Corporativa</option>
+                  <option value="zwe">🏢 Solo ZWE Corporativa</option>
+                </select>
               </div>
 
               {/* 3. Resumen / Contenido del Artículo */}
