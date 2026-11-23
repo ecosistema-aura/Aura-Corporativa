@@ -492,24 +492,18 @@ export const NosotrosPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-stretch">
             {/* Foto Ilustrativa Grande que Abarca Pantalla */}
-            <div className="lg:col-span-5 reveal-up">
-              <div className="relative rounded-xl overflow-hidden shadow-2xl border border-white/15 group h-80 sm:h-96 lg:h-[500px]">
+            <div className="lg:col-span-5 reveal-up flex flex-col h-full">
+              <div className="relative rounded-xl overflow-hidden shadow-2xl border border-white/15 w-full h-80 sm:h-96 lg:h-auto lg:flex-1">
                 <img
                   src={porqueSupervision}
                   alt="Supervisión en terreno Aura Corporativa"
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                  className="absolute inset-0 w-full h-full object-cover object-center"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#071321] via-[#071321]/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#071321] via-[#071321]/30 to-transparent pointer-events-none" />
 
                 <div className="absolute bottom-6 left-6 right-6 text-white text-left">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="h-2 w-2 rounded-full bg-[#DC2626]" />
-                    <span className="text-xs uppercase font-extrabold text-red-400 tracking-wider">
-                      Supervisión Presencial en Sede
-                    </span>
-                  </div>
                   <p className="text-base font-bold text-white leading-snug">
                     Inspecciones laborales y auditoría operativa permanente en cada punto de trabajo.
                   </p>

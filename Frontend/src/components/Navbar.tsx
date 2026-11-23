@@ -18,7 +18,6 @@ export const Navbar: React.FC<NavbarProps> = ({ isMenuOpen, onMenuToggle }) => {
   const isServicios = location.pathname === '/servicios';
   const isNosotros = location.pathname === '/nosotros';
   const isBlog = location.pathname === '/blog' || location.pathname.startsWith('/blog/');
-  const isFaq = location.pathname === '/faq';
   const isContacto = location.pathname === '/contacto';
 
   const handleToggle = (open: boolean) => {
@@ -101,14 +100,6 @@ export const Navbar: React.FC<NavbarProps> = ({ isMenuOpen, onMenuToggle }) => {
           >
             Blog
           </Link>
-
-          <Link
-            to="/faq"
-            onClick={() => handleToggle(false)}
-            className={navItemClass(isFaq)}
-          >
-            FAQ
-          </Link>
         </nav>
 
         {/* Right Desktop CTA + Mobile Hamburger Button */}
@@ -179,14 +170,6 @@ export const Navbar: React.FC<NavbarProps> = ({ isMenuOpen, onMenuToggle }) => {
                 className={mobileItemClass(isBlog)}
               >
                 <span>Blog</span>
-              </Link>
-
-              <Link
-                to="/faq"
-                onClick={() => handleToggle(false)}
-                className={mobileItemClass(isFaq)}
-              >
-                <span>FAQ</span>
               </Link>
             </nav>
 

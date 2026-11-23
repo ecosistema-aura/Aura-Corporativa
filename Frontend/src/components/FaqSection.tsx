@@ -10,7 +10,7 @@ export const FaqSection: React.FC = () => {
   };
 
   return (
-    <section id="faq" className="relative overflow-hidden py-20 bg-white">
+    <section id="faq" className="relative overflow-hidden py-20 bg-white border-b border-slate-200">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14 reveal-up">
           <div className="flex items-center justify-center gap-3 mb-3">
@@ -31,7 +31,7 @@ export const FaqSection: React.FC = () => {
             return (
               <div
                 key={index}
-                className="border border-[#0D1B2A]/15 rounded-lg overflow-hidden shadow-2xs transition-all duration-200 hover:border-slate-300 reveal-up"
+                className="border border-[#0D1B2A]/15 overflow-hidden shadow-2xs transition-all duration-200 hover:border-slate-300 reveal-up"
               >
                 <div
                   onClick={() => toggleFaq(index)}

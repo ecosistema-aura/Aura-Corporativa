@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from 'react';
+import { createPortal } from 'react-dom';
 import {
   CalendarDays,
   CheckCircle2,
@@ -94,6 +95,27 @@ export function BlogAdminPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState<BlogPost | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Bloquear scroll de la página y cerrar con Escape cuando los modales están abiertos
+  useEffect(() => {
+    if (isModalOpen || isDeleteModalOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          if (isModalOpen && !isSaving) closeModal();
+          if (isDeleteModalOpen && !isDeleting) closeDeleteModal();
+        }
+      };
+
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [isModalOpen, isDeleteModalOpen, isSaving, isDeleting]);
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToastMessage(message);
@@ -499,18 +521,6 @@ export function BlogAdminPage() {
               <option value="aura">Solo Aura</option>
               <option value="zwe">Solo ZWE</option>
             </select>
-
-            {/* Filtro de Destino (Empresa) */}
-            <select
-              value={selectedCompanyFilter}
-              onChange={(event) => setSelectedCompanyFilter(event.target.value)}
-              className="rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 outline-none transition focus:border-[#0B192C]"
-            >
-              <option value="Todas">Todos los destinos</option>
-              <option value="ambas">Ambas webs</option>
-              <option value="aura">Solo Aura</option>
-              <option value="zwe">Solo ZWE</option>
-            </select>
           </div>
 
           {/* Botón Nueva Noticia */}
@@ -694,20 +704,27 @@ export function BlogAdminPage() {
       {/* ========================================================================= */}
       {/* MODAL CREAR / EDITAR NOTICIA (MISMOS INPUTS QUE ZWE)                      */}
       {/* ========================================================================= */}
-      {isModalOpen && (
+      {isModalOpen && typeof document !== 'undefined' && createPortal(
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs overflow-y-auto"
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 p-3 sm:p-4 md:p-6 backdrop-blur-xs animate-in fade-in duration-200"
           onClick={closeModal}
         >
           <div
-            className="w-full max-w-2xl rounded-2xl bg-white shadow-2xl border border-slate-200 my-8 overflow-hidden transition-all animate-in fade-in zoom-in-95 duration-200"
+            className="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl bg-white shadow-2xl border border-slate-200 overflow-hidden transition-all animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4 bg-slate-50/60">
-              <h2 className="text-lg font-black text-[#0B192C]">
-                {isEditing ? 'Editar Noticia' : 'Publicar Nueva Noticia'}
-              </h2>
+            <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-6 py-4 bg-slate-50/80">
+              <div>
+                <h2 className="text-lg font-black text-[#0B192C]">
+                  {isEditing ? 'Editar Noticia' : 'Publicar Nueva Noticia'}
+                </h2>
+                <p className="text-xs text-slate-500">
+                  {isEditing ? 'Modifica los campos del artículo seleccionado' : 'Completa la información para publicar en el blog'}
+                </p>
+              </div>
               <button
                 type="button"
                 onClick={closeModal}
@@ -718,188 +735,172 @@ export function BlogAdminPage() {
               </button>
             </div>
 
-            {/* Modal Form Body */}
-            <form onSubmit={handleSavePost} className="p-6 space-y-4.5">
-              {/* 1. Título del Artículo */}
-              <div>
-                <label htmlFor="postTitle" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                  Título del Artículo <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="postTitle"
-                  required
-                  value={postForm.title}
-                  onChange={(e) => setPostForm({ ...postForm, title: e.target.value })}
-                  placeholder="Ej: Nuevas normativas de SUNAFIL para MYPEs en 2026"
-                  className="mt-1.5 w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0B192C] focus:ring-1 focus:ring-[#0B192C]"
-                />
-              </div>
-
-              {/* 2. Fila Categoría y Fecha de Publicación */}
-              <div className="grid gap-4 sm:grid-cols-2">
+            {/* Modal Form Body - Contenedor con Scroll Ergonómico */}
+            <form onSubmit={handleSavePost} className="flex flex-col min-h-0 flex-1 overflow-hidden">
+              <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4.5 overscroll-contain">
+                {/* 1. Título del Artículo */}
                 <div>
-                  <label htmlFor="postCategory" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                    Categoría <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    id="postCategory"
-                    required
-                    value={postForm.category}
-                    onChange={(e) => setPostForm({ ...postForm, category: e.target.value as BlogCategory })}
-                    className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0B192C]"
-                  >
-                    {categories.map((cat) => (
-                      <option key={cat} value={cat}>
-                        {cat}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label htmlFor="postDate" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                    Fecha de Publicación <span className="text-red-500">*</span>
+                  <label htmlFor="postTitle" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                    Título del Artículo <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    id="postDate"
+                    id="postTitle"
                     required
-                    value={postForm.date}
-                    onChange={(e) => setPostForm({ ...postForm, date: e.target.value })}
-                    placeholder="Ej: 05 Oct, 2026"
+                    value={postForm.title}
+                    onChange={(e) => setPostForm({ ...postForm, title: e.target.value })}
+                    placeholder="Ej: Nuevas normativas de SUNAFIL para MYPEs en 2026"
                     className="mt-1.5 w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0B192C] focus:ring-1 focus:ring-[#0B192C]"
                   />
                 </div>
-              </div>
 
-              {/* Destino de Publicación (Visibilidad) */}
-              <div>
-                <label htmlFor="postEmpresa" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                  Publicar en (Visibilidad) <span className="text-red-500">*</span>
-                </label>
-                <select
-                  id="postEmpresa"
-                  required
-                  value={postForm.empresa}
-                  onChange={(e) => setPostForm({ ...postForm, empresa: e.target.value })}
-                  className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0B192C]"
-                >
-                  <option value="ambas">🌐 Ambas páginas (ZWE y Aura Corporativa) - Recomendado</option>
-                  <option value="aura">💼 Solo Aura Corporativa</option>
-                  <option value="zwe">🏢 Solo ZWE Corporativa</option>
-                </select>
-              </div>
+                {/* 2. Fila Categoría y Fecha de Publicación */}
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="postCategory" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                      Categoría <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      id="postCategory"
+                      required
+                      value={postForm.category}
+                      onChange={(e) => setPostForm({ ...postForm, category: e.target.value as BlogCategory })}
+                      className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0B192C]"
+                    >
+                      {categories.map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-              {/* Destino de Publicación (Empresa / Visibilidad) */}
-              <div>
-                <label htmlFor="postEmpresa" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                  Publicar en (Visibilidad) <span className="text-red-500">*</span>
-                </label>
-                <select
-                  id="postEmpresa"
-                  required
-                  value={postForm.empresa || 'ambas'}
-                  onChange={(e) => setPostForm({ ...postForm, empresa: e.target.value })}
-                  className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0B192C]"
-                >
-                  <option value="ambas">🌐 Ambas páginas (Aura Corporativa y ZWE) - Recomendado</option>
-                  <option value="aura">💼 Solo Aura Corporativa</option>
-                  <option value="zwe">🏢 Solo ZWE Corporativa</option>
-                </select>
-              </div>
-
-              {/* 3. Resumen / Contenido del Artículo */}
-              <div>
-                <label htmlFor="postDesc" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                  Resumen / Contenido del Artículo <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  id="postDesc"
-                  rows={4}
-                  required
-                  value={postForm.desc}
-                  onChange={(e) => setPostForm({ ...postForm, desc: e.target.value })}
-                  placeholder="Describe los puntos clave del artículo..."
-                  className="mt-1.5 w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0B192C] focus:ring-1 focus:ring-[#0B192C] resize-y"
-                />
-              </div>
-
-              {/* 4. Enlace a la Noticia Completa (Opcional) */}
-              <div>
-                <label htmlFor="postLink" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                  Enlace a la Noticia Completa (Opcional){' '}
-                  <span className="font-normal text-slate-500 text-[11px] normal-case">
-                    (Ej: link de diario, portal de noticias o PDF)
-                  </span>
-                </label>
-                <div className="relative mt-1.5">
-                  <LinkIcon
-                    size={16}
-                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
-                    aria-hidden="true"
-                  />
-                  <input
-                    type="url"
-                    id="postLink"
-                    value={postForm.link}
-                    onChange={(e) => setPostForm({ ...postForm, link: e.target.value })}
-                    placeholder="https://ejemplo.com/noticia-completa"
-                    className="w-full rounded-lg border border-slate-300 pl-10 pr-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0B192C] focus:ring-1 focus:ring-[#0B192C]"
-                  />
-                </div>
-              </div>
-
-              {/* 5. Subida de Imagen con Dropzone y Vista Previa */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                  Imagen de la Noticia
-                </label>
-                <div className="space-y-3">
-                  {/* Dropzone */}
-                  <label
-                    htmlFor="imageInput"
-                    className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/80 p-5 text-center transition hover:border-[#DC2626] hover:bg-red-50/20"
-                  >
-                    <UploadCloud size={30} className="text-[#DC2626] mb-1" />
-                    <span className="text-sm font-semibold text-slate-700">
-                      Haz clic aquí para <strong>subir una imagen</strong> desde tu dispositivo
-                    </span>
-                    <span className="text-xs text-slate-400 mt-0.5">
-                      Formatos soportados: WEBP, PNG, JPG (máx. 5MB)
-                    </span>
+                  <div>
+                    <label htmlFor="postDate" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                      Fecha de Publicación <span className="text-red-500">*</span>
+                    </label>
                     <input
-                      type="file"
-                      id="imageInput"
-                      accept="image/*"
-                      onChange={handleFileSelected}
-                      className="hidden"
+                      type="text"
+                      id="postDate"
+                      required
+                      value={postForm.date}
+                      onChange={(e) => setPostForm({ ...postForm, date: e.target.value })}
+                      placeholder="Ej: 05 Oct, 2026"
+                      className="mt-1.5 w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0B192C] focus:ring-1 focus:ring-[#0B192C]"
                     />
-                  </label>
+                  </div>
+                </div>
 
-                  {/* Vista Previa de la Imagen */}
-                  {imagePreview && (
-                    <div className="relative h-36 w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
-                      <img
-                        src={imagePreview}
-                        alt="Vista previa"
-                        className="h-full w-full object-cover"
-                      />
-                      <span className="absolute bottom-2 left-2 rounded bg-black/75 px-2 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider">
-                        Vista Previa
+                {/* Destino de Publicación (Visibilidad) */}
+                <div>
+                  <label htmlFor="postEmpresa" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                    Publicar en (Visibilidad) <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    id="postEmpresa"
+                    required
+                    value={postForm.empresa || 'ambas'}
+                    onChange={(e) => setPostForm({ ...postForm, empresa: e.target.value })}
+                    className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0B192C]"
+                  >
+                    <option value="ambas">🌐 Ambas páginas (Aura Corporativa y ZWE) - Recomendado</option>
+                    <option value="aura">💼 Solo Aura Corporativa</option>
+                    <option value="zwe">🏢 Solo ZWE Corporativa</option>
+                  </select>
+                </div>
+
+                {/* 3. Resumen / Contenido del Artículo */}
+                <div>
+                  <label htmlFor="postDesc" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                    Resumen / Contenido del Artículo <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    id="postDesc"
+                    rows={4}
+                    required
+                    value={postForm.desc}
+                    onChange={(e) => setPostForm({ ...postForm, desc: e.target.value })}
+                    placeholder="Describe los puntos clave del artículo..."
+                    className="mt-1.5 w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0B192C] focus:ring-1 focus:ring-[#0B192C] resize-y"
+                  />
+                </div>
+
+                {/* 4. Enlace a la Noticia Completa (Opcional) */}
+                <div>
+                  <label htmlFor="postLink" className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                    Enlace a la Noticia Completa (Opcional){' '}
+                    <span className="font-normal text-slate-500 text-[11px] normal-case">
+                      (Ej: link de diario, portal de noticias o PDF)
+                    </span>
+                  </label>
+                  <div className="relative mt-1.5">
+                    <LinkIcon
+                      size={16}
+                      className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                      aria-hidden="true"
+                    />
+                    <input
+                      type="url"
+                      id="postLink"
+                      value={postForm.link}
+                      onChange={(e) => setPostForm({ ...postForm, link: e.target.value })}
+                      placeholder="https://ejemplo.com/noticia-completa"
+                      className="w-full rounded-lg border border-slate-300 pl-10 pr-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0B192C] focus:ring-1 focus:ring-[#0B192C]"
+                    />
+                  </div>
+                </div>
+
+                {/* 5. Subida de Imagen con Dropzone y Vista Previa */}
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                    Imagen de la Noticia
+                  </label>
+                  <div className="space-y-3">
+                    {/* Dropzone */}
+                    <label
+                      htmlFor="imageInput"
+                      className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/80 p-5 text-center transition hover:border-[#DC2626] hover:bg-red-50/20"
+                    >
+                      <UploadCloud size={30} className="text-[#DC2626] mb-1" />
+                      <span className="text-sm font-semibold text-slate-700">
+                        Haz clic aquí para <strong>subir una imagen</strong> desde tu dispositivo
                       </span>
-                    </div>
-                  )}
+                      <span className="text-xs text-slate-400 mt-0.5">
+                        Formatos soportados: WEBP, PNG, JPG (máx. 5MB)
+                      </span>
+                      <input
+                        type="file"
+                        id="imageInput"
+                        accept="image/*"
+                        onChange={handleFileSelected}
+                        className="hidden"
+                      />
+                    </label>
+
+                    {/* Vista Previa de la Imagen */}
+                    {imagePreview && (
+                      <div className="relative h-36 w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
+                        <img
+                          src={imagePreview}
+                          alt="Vista previa"
+                          className="h-full w-full object-cover"
+                        />
+                        <span className="absolute bottom-2 left-2 rounded bg-black/75 px-2 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider">
+                          Vista Previa
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              {/* Modal Footer */}
-              <div className="mt-6 flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+              {/* Modal Footer - Siempre visible */}
+              <div className="shrink-0 flex items-center justify-end gap-3 border-t border-slate-100 px-6 py-4 bg-slate-50/80">
                 <button
                   type="button"
                   onClick={closeModal}
                   disabled={isSaving}
-                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50 transition"
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100 transition"
                 >
                   Cancelar
                 </button>
@@ -922,15 +923,18 @@ export function BlogAdminPage() {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* ========================================================================= */}
       {/* MODAL CONFIRMAR ELIMINACIÓN                                               */}
       {/* ========================================================================= */}
-      {isDeleteModalOpen && (
+      {isDeleteModalOpen && typeof document !== 'undefined' && createPortal(
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs"
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs animate-in fade-in duration-200"
           onClick={closeDeleteModal}
         >
           <div
@@ -974,7 +978,8 @@ export function BlogAdminPage() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </main>
   );
