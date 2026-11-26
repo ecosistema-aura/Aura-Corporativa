@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-heading: 'DM Sans', sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Sora', sans-serif;
 }
 
 @layer base {
@@ -10,8 +10,8 @@
     /* =========================================
        1. TIPOGRAFÍAS
        ========================================= */
-    --font-sans: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-heading: 'DM Sans', sans-serif;
+    --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-heading: 'Sora', sans-serif;
 
         /* =========================================
        2. PALETA DE MARCA (AURA CORPORATIVA)
@@ -92,6 +92,10 @@
     -webkit-font-smoothing: antialiased;
     background-color: var(--bg-page);
     color: var(--text-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
   }
 }
 
@@ -266,5 +270,51 @@
     transform: none !important;
     transition: none !important;
   }
+}
+
+/* =============================================================================
+   12. RELIEVE Y PROFUNDIDAD CORPORATIVA EN FONDOS Y TARJETAS
+   ============================================================================= */
+.surface-relief-light {
+  background-color: #ebf0f6;
+  background-image:
+    radial-gradient(ellipse 75% 45% at 50% 0%, rgba(255, 255, 255, 0.75) 0%, transparent 75%),
+    radial-gradient(rgba(11, 25, 44, 0.14) 1.25px, transparent 1.25px),
+    linear-gradient(to right, rgba(11, 25, 44, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(11, 25, 44, 0.045) 1px, transparent 1px);
+  background-size: 100% 100%, 32px 32px, 32px 32px, 32px 32px;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.9),
+    inset 0 22px 38px -18px rgba(11, 25, 44, 0.16),
+    inset 0 -22px 38px -18px rgba(11, 25, 44, 0.13);
+}
+
+.surface-relief-dark {
+  background-color: #071321;
+  background-image:
+    radial-gradient(ellipse 65% 55% at 15% 15%, rgba(30, 74, 130, 0.45) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 45% at 88% 82%, rgba(220, 38, 38, 0.11) 0%, transparent 65%),
+    linear-gradient(to right, rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 28px 48px -16px rgba(0, 0, 0, 0.8),
+    inset 0 -28px 48px -16px rgba(0, 0, 0, 0.7);
+}
+
+.card-relief-light {
+  background-color: #ffffff;
+  box-shadow:
+    0 12px 28px -6px rgba(11, 25, 44, 0.12),
+    0 4px 10px -2px rgba(11, 25, 44, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+.card-relief-dark {
+  background-color: rgba(14, 30, 52, 0.85);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 18px 36px -8px rgba(0, 0, 0, 0.65);
 }
 

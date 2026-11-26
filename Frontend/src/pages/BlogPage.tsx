@@ -165,8 +165,8 @@ export function BlogPage() {
   const isPostLoading = Boolean(slug && (!postResult || postResult.slug !== slug));
 
   return (
-    <main className="grow bg-[#FAFBFD]">
-      <section className="bg-[#0B192C] px-4 py-14 text-center text-white sm:py-16">
+    <main className="grow surface-relief-light">
+      <section className="surface-relief-dark px-4 py-14 text-center text-white sm:py-16">
         <p className="text-sm font-bold uppercase tracking-[0.22em] text-red-300">Aura Corporativa</p>
         <h1 className="mx-auto mt-3 max-w-4xl text-3xl font-black sm:text-4xl">
           Blog de Contabilidad y Finanzas

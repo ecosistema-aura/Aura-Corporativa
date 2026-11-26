@@ -92,7 +92,7 @@ export const ContactInfoSection: React.FC<ContactInfoProps> = ({ onOpenPrivacy }
     }`;
 
   return (
-    <section id="contacto" className="relative overflow-hidden py-20 bg-slate-50/70">
+    <section id="contacto" className="relative overflow-hidden py-20 surface-relief-light">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Title matching mockup */}
         <div className="text-center mb-14 reveal-up">
@@ -103,7 +103,7 @@ export const ContactInfoSection: React.FC<ContactInfoProps> = ({ onOpenPrivacy }
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Left: Form Card matching mockup */}
-          <div className="bg-white rounded-xl shadow-sm border border-[#0D1B2A]/15 p-6 sm:p-8 relative reveal-up">
+          <div className="card-relief-light rounded-xl border border-[#0D1B2A]/15 p-6 sm:p-8 relative reveal-up">
             {/* Top red accent border line */}
             <div className="absolute top-0 left-6 right-6 h-1 bg-gradient-to-r from-[#0D1B2A] via-[#DC2626] to-[#0D1B2A] rounded-t" />
 

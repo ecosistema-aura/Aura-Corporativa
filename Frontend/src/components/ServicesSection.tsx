@@ -26,7 +26,7 @@ export const ServicesSection: React.FC = () => {
   };
 
   return (
-    <section id="servicios-showcase" className="w-full bg-white">
+    <section id="servicios-showcase" className="w-full surface-relief-light">
       {/* Encabezado Institucional Previo */}
       <div className="py-16 sm:py-20 text-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 reveal-up">
         <div className="flex items-center justify-center gap-3 mb-3">

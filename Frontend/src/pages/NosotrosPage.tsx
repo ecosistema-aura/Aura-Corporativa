@@ -369,7 +369,7 @@ export const NosotrosPage: React.FC = () => {
       {/* =========================================================================
           2. PILARES ESTRATÉGICOS DE VALOR (INTERCALADO: FONDO BLANCO)
          ========================================================================= */}
-      <section className="py-20 lg:py-28 bg-white border-b border-slate-200">
+      <section className="py-20 lg:py-28 surface-relief-light border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center mb-16 reveal-up">
@@ -476,7 +476,7 @@ export const NosotrosPage: React.FC = () => {
       {/* =========================================================================
           3. COMPARATIVA VISUAL: AURA VS. MODELO TRADICIONAL (INTERCALADO: FONDO AZUL OSCURO #071321)
          ========================================================================= */}
-      <section className="py-20 lg:py-28 bg-[#071321] text-white border-b border-slate-800">
+      <section className="py-20 lg:py-28 surface-relief-dark text-white border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mb-16 text-center md:text-left mx-auto md:mx-0 reveal-up">
             <div className="flex items-center justify-center md:justify-start gap-3 mb-3">
@@ -555,7 +555,7 @@ export const NosotrosPage: React.FC = () => {
       {/* =========================================================================
           4. METODOLOGÍA EN 4 FASES (INTERCALADO: FONDO BLANCO)
          ========================================================================= */}
-      <section className="py-20 lg:py-28 bg-white border-b border-slate-200">
+      <section className="py-20 lg:py-28 surface-relief-light border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16 reveal-up">
             <div className="flex items-center justify-center gap-3 mb-3">
@@ -579,7 +579,7 @@ export const NosotrosPage: React.FC = () => {
               return (
                 <div
                   key={idx}
-                  className="bg-slate-50/80 p-8 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-white hover:shadow-lg transition-all duration-300 flex flex-col justify-between reveal-up text-left"
+                  className="card-relief-light p-8 rounded-xl border border-slate-200/90 hover:border-slate-300 transition-all duration-300 flex flex-col justify-between reveal-up text-left"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-6">
@@ -607,7 +607,7 @@ export const NosotrosPage: React.FC = () => {
       {/* =========================================================================
           5. NUESTROS VALORES (INTERCALADO: FONDO AZUL OSCURO #071321)
          ========================================================================= */}
-      <section className="py-20 lg:py-28 bg-[#071321] text-white border-b border-slate-800">
+      <section className="py-20 lg:py-28 surface-relief-dark text-white border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center mb-16 reveal-up">
@@ -631,7 +631,7 @@ export const NosotrosPage: React.FC = () => {
             {tawaValues.map((val, idx) => (
               <div
                 key={idx}
-                className="p-8 rounded-xl bg-white/5 border border-white/10 hover:border-white/25 hover:bg-white/10 transition-all text-left flex flex-col justify-between"
+                className="p-8 rounded-xl card-relief-dark border border-white/10 hover:border-white/25 transition-all text-left flex flex-col justify-between"
               >
                 <div>
                   <div className="text-3xl font-black text-[#DC2626] mb-4">
@@ -654,7 +654,7 @@ export const NosotrosPage: React.FC = () => {
       {/* =========================================================================
           6. VIDEO INSTITUCIONAL AURA EN MOVIMIENTO (INTERCALADO: FONDO SLATE-50)
          ========================================================================= */}
-      <section className="py-20 lg:py-24 bg-slate-50 border-b border-slate-200">
+      <section className="py-20 lg:py-24 surface-relief-light border-b border-slate-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10 sm:mb-14 reveal-up">
             <div className="flex items-center justify-center gap-3 mb-3">
@@ -733,7 +733,7 @@ export const NosotrosPage: React.FC = () => {
       {/* =========================================================================
           7. CANALES OFICIALES & COMUNIDAD (INTERCALADO: FONDO AZUL OSCURO #071321)
          ========================================================================= */}
-      <section className="py-20 lg:py-24 bg-[#071321] text-white border-b border-slate-800">
+      <section className="py-20 lg:py-24 surface-relief-dark text-white border-b border-slate-800">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="reveal-up">
             <div className="flex items-center justify-center gap-3 mb-3">
@@ -822,7 +822,7 @@ export const NosotrosPage: React.FC = () => {
       {/* =========================================================================
           9. BANNER DE CIERRE CORPORATIVO (INTERCALADO: FONDO AZUL OSCURO #071321)
          ========================================================================= */}
-      <section className="py-20 lg:py-24 bg-[#071321] text-white border-t border-slate-800 text-center">
+      <section className="py-20 lg:py-24 surface-relief-dark text-white border-t border-slate-800 text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 reveal-up">
           <div className="flex items-center justify-center gap-3 mb-3">
             <span className="h-0.5 w-10 bg-[#DC2626]" />

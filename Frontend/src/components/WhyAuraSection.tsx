@@ -47,7 +47,7 @@ export const WhyAuraSection: React.FC<WhyAuraSectionProps> = ({
     <section 
       id="por-que-aura" 
       className={`relative overflow-hidden py-20 lg:py-28 border-b ${
-        isDark ? 'bg-[#071321] text-white border-slate-800' : 'bg-white text-slate-800 border-slate-200'
+        isDark ? 'surface-relief-dark text-white border-slate-800' : 'surface-relief-light text-slate-800 border-slate-200'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -77,8 +77,8 @@ export const WhyAuraSection: React.FC<WhyAuraSectionProps> = ({
               key={index} 
               className={`text-left p-6 sm:p-8 rounded-xl border transition-all reveal-up ${
                 isDark 
-                  ? 'bg-white/5 border-white/10' 
-                  : 'bg-slate-50/80 border-slate-200 hover:border-slate-300 hover:shadow-md'
+                  ? 'card-relief-dark border-white/10' 
+                  : 'card-relief-light border-slate-200/90 hover:border-slate-300'
               }`}
             >
               <div className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#DC2626] tracking-tight">

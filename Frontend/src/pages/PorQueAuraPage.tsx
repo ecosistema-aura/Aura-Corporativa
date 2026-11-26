@@ -65,7 +65,7 @@ export const PorQueAuraPage: React.FC = () => {
       {/* =========================================================================
           1. HEADER BANNER (AZUL OSCURO)
          ========================================================================= */}
-      <section className="bg-[#071321] text-white py-20 lg:py-24 relative overflow-hidden border-b border-slate-800">
+      <section className="surface-relief-dark text-white py-20 lg:py-24 relative overflow-hidden border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left">
           <div className="flex items-center justify-center sm:justify-start gap-3 mb-4">
             <span className="h-0.5 w-10 bg-[#DC2626]" />
@@ -92,7 +92,7 @@ export const PorQueAuraPage: React.FC = () => {
           3. COMPARATIVA VISUAL EXTENDIDA: AURA VS. MODELO TRADICIONAL 
              (INTERCALADO: FONDO AZUL OSCURO, SIN CARDS APRETADAS, ABARCANDO PANTALLA)
          ========================================================================= */}
-      <section className="py-20 lg:py-28 bg-[#071321] text-white border-b border-slate-800">
+      <section className="py-20 lg:py-28 surface-relief-dark text-white border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mb-16 text-center md:text-left mx-auto md:mx-0 reveal-up">
             <div className="flex items-center justify-center md:justify-start gap-3 mb-3">
@@ -140,7 +140,7 @@ export const PorQueAuraPage: React.FC = () => {
               {comparisonItems.map((item, idx) => (
                 <div 
                   key={idx}
-                  className="p-6 rounded-xl border border-white/10 bg-white/5 hover:border-white/20 transition-all duration-300 grid grid-cols-1 sm:grid-cols-2 gap-5"
+                  className="p-6 rounded-xl border border-white/10 card-relief-dark hover:border-white/20 transition-all duration-300 grid grid-cols-1 sm:grid-cols-2 gap-5"
                 >
                   {/* Lado Tradicional */}
                   <div className="flex items-start gap-3.5 border-b sm:border-b-0 sm:border-r border-white/10 pb-4 sm:pb-0 sm:pr-5">
@@ -177,7 +177,7 @@ export const PorQueAuraPage: React.FC = () => {
       {/* =========================================================================
           4. METODOLOGÍA EN 4 FASES (INTERCALADO: FONDO BLANCO, ABARCANDO PANTALLA)
          ========================================================================= */}
-      <section className="py-20 lg:py-28 bg-white border-b border-slate-200">
+      <section className="py-20 lg:py-28 surface-relief-light border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16 reveal-up">
             <div className="flex items-center justify-center gap-3 mb-3">
@@ -201,7 +201,7 @@ export const PorQueAuraPage: React.FC = () => {
               return (
                 <div
                   key={idx}
-                  className="bg-slate-50/80 p-8 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-white hover:shadow-lg transition-all duration-300 flex flex-col justify-between reveal-up text-left"
+                  className="card-relief-light p-8 rounded-xl border border-slate-200/90 hover:border-slate-300 transition-all duration-300 flex flex-col justify-between reveal-up text-left"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-6">

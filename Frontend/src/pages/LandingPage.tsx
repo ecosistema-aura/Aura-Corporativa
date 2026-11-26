@@ -101,7 +101,7 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
       {/* =========================================================================
           2. SOLIDEZ EMPRESARIAL & CIFRAS (INTERCALADO: FONDO BLANCO)
          ========================================================================= */}
-      <section className="py-20 lg:py-24 bg-white border-b border-slate-200">
+      <section className="py-20 lg:py-24 surface-relief-light border-b border-slate-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mb-16 text-center md:text-left mx-auto md:mx-0 reveal-up">
             <div className="flex items-center justify-center md:justify-start gap-3 mb-4">
@@ -121,7 +121,7 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
 
           {/* Cifras de Respaldo en Cajas Claras y Sobrias */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 reveal-stagger">
-            <div className="p-6 rounded-xl bg-slate-50/80 border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all text-left reveal-up">
+            <div className="p-6 rounded-xl card-relief-light border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all text-left reveal-up">
               <div className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#DC2626] tracking-tight">
                 100%
               </div>
@@ -133,7 +133,7 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
               </div>
             </div>
 
-            <div className="p-6 rounded-xl bg-slate-50/80 border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all text-left reveal-up">
+            <div className="p-6 rounded-xl card-relief-light border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all text-left reveal-up">
               <div className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#DC2626] tracking-tight">
                 24-48h
               </div>
@@ -145,7 +145,7 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
               </div>
             </div>
 
-            <div className="p-6 rounded-xl bg-slate-50/80 border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all text-left reveal-up">
+            <div className="p-6 rounded-xl card-relief-light border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all text-left reveal-up">
               <div className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
                 Nacional
               </div>
@@ -157,7 +157,7 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
               </div>
             </div>
 
-            <div className="p-6 rounded-xl bg-slate-50/80 border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all text-left reveal-up">
+            <div className="p-6 rounded-xl card-relief-light border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all text-left reveal-up">
               <div className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#DC2626] tracking-tight">
                 0%
               </div>
@@ -176,7 +176,7 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
           3. LÍNEAS DE ESPECIALIDAD (REDISEÑO CONCISO: IMÁGENES PRESERVADAS, 
              CONTENIDO ESENCIAL RESUMIDO Y BOTONES DIRECTOS HACIA SERVICIOS)
          ========================================================================= */}
-      <section id="lineas-especialidad" className="py-20 lg:py-24 bg-[#071321] text-white border-b border-slate-800">
+      <section id="lineas-especialidad" className="py-20 lg:py-24 surface-relief-dark text-white border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Encabezado Principal */}
@@ -202,7 +202,7 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
               return (
                 <div
                   key={service.id}
-                  className="bg-slate-900/60 border border-white/10 flex flex-col reveal-up"
+                  className="card-relief-dark border border-white/10 flex flex-col reveal-up"
                 >
                   {/* Contenedor de Imagen con Overlay y Badges */}
                   <div className="relative h-60 sm:h-72 overflow-hidden bg-slate-950">
@@ -258,7 +258,7 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
       {/* =========================================================================
           4. SECTORES PRODUCTIVOS ATENDIDOS (CARDS HORIZONTALES AMPLIOS)
          ========================================================================= */}
-      <section className="py-20 lg:py-24 bg-white border-b border-slate-200">
+      <section className="py-20 lg:py-24 surface-relief-light border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
           <div className="text-center mb-14 reveal-up">
             <div className="flex items-center justify-center gap-3 mb-3">
@@ -282,7 +282,7 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
               return (
                 <div
                   key={i}
-                  className="w-full p-6 sm:p-8 bg-slate-50/80 border border-slate-200 border-l-4 border-l-[#DC2626] flex flex-col lg:flex-row lg:items-center justify-between gap-6 text-left reveal-up"
+                  className="w-full p-6 sm:p-8 card-relief-light border border-slate-200/90 border-l-4 border-l-[#DC2626] flex flex-col lg:flex-row lg:items-center justify-between gap-6 text-left reveal-up"
                 >
                   {/* Bloque Izquierdo: Ícono + Título + Descripción */}
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 lg:gap-6 flex-1">

@@ -34,7 +34,7 @@ export const ServiciosPage: React.FC = () => {
       {/* =========================================================================
           1. HEADER BANNER CORPORATIVO (AZUL OSCURO)
          ========================================================================= */}
-      <section className="bg-[#071321] text-white py-20 lg:py-24 relative overflow-hidden border-b border-slate-800">
+      <section className="surface-relief-dark text-white py-20 lg:py-24 relative overflow-hidden border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left">
           <div className="flex items-center justify-center sm:justify-start gap-3 mb-4">
             <span className="h-0.5 w-10 bg-[#DC2626]" />
@@ -61,7 +61,7 @@ export const ServiciosPage: React.FC = () => {
       {/* =========================================================================
           3. GARANTÍAS OPERATIVAS & SLA (INTERCALADO: FONDO BLANCO, ABARCANDO PANTALLA)
          ========================================================================= */}
-      <section className="py-20 lg:py-28 bg-white border-b border-slate-200">
+      <section className="py-20 lg:py-28 surface-relief-light border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16 reveal-up">
             <div className="flex items-center justify-center gap-3 mb-3">
@@ -85,7 +85,7 @@ export const ServiciosPage: React.FC = () => {
               return (
                 <div
                   key={idx}
-                  className="p-8 rounded-xl bg-slate-50/80 border border-slate-200 hover:border-slate-300 hover:shadow-lg transition-all text-left flex flex-col justify-between"
+                  className="p-8 rounded-xl card-relief-light border border-slate-200/90 hover:border-slate-300 transition-all text-left flex flex-col justify-between"
                 >
                   <div>
                     <div className="w-12 h-12 rounded-lg bg-red-600/10 border border-red-500/20 text-[#DC2626] flex items-center justify-center mb-6">
