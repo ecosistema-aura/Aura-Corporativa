@@ -36,11 +36,12 @@ export const ServiciosPage: React.FC = () => {
          ========================================================================= */}
       <section className="bg-[#071321] text-white py-20 lg:py-24 relative overflow-hidden border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left">
-          <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center justify-center sm:justify-start gap-3 mb-4">
             <span className="h-0.5 w-10 bg-[#DC2626]" />
             <span className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-slate-300">
               Soluciones Especializadas
             </span>
+            <span className="h-0.5 w-10 bg-[#DC2626] sm:hidden" />
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight text-white leading-tight max-w-4xl">
             Líneas de Servicio en <span className="text-[#DC2626]">Tercerización</span> y Gestión Humana

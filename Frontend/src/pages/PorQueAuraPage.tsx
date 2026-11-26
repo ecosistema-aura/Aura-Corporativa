@@ -67,11 +67,12 @@ export const PorQueAuraPage: React.FC = () => {
          ========================================================================= */}
       <section className="bg-[#071321] text-white py-20 lg:py-24 relative overflow-hidden border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left">
-          <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center justify-center sm:justify-start gap-3 mb-4">
             <span className="h-0.5 w-10 bg-[#DC2626]" />
             <span className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-slate-300">
               Diferenciación & Respaldo
             </span>
+            <span className="h-0.5 w-10 bg-[#DC2626] sm:hidden" />
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight text-white leading-tight max-w-4xl">
             ¿Por qué elegir a <span className="text-[#DC2626]">Aura Corporativa</span> como su socio operativo?
@@ -93,12 +94,13 @@ export const PorQueAuraPage: React.FC = () => {
          ========================================================================= */}
       <section className="py-20 lg:py-28 bg-[#071321] text-white border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mb-16 text-left reveal-up">
-            <div className="flex items-center gap-3 mb-3">
+          <div className="max-w-3xl mb-16 text-center md:text-left mx-auto md:mx-0 reveal-up">
+            <div className="flex items-center justify-center md:justify-start gap-3 mb-3">
               <span className="h-0.5 w-10 bg-[#DC2626]" />
               <span className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-slate-300">
                 Comparativa de Modelo
               </span>
+              <span className="h-0.5 w-10 bg-[#DC2626] md:hidden" />
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
               La Diferencia de Operar con un <span className="text-[#DC2626]">Socio Estratégico</span>

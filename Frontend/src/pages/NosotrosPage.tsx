@@ -271,6 +271,7 @@ export const NosotrosPage: React.FC = () => {
                 <span className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-slate-400">
                   Nosotros • Grupo Aura
                 </span>
+                <span className="h-0.5 w-10 bg-[#DC2626] lg:hidden" />
               </div>
 
               {/* Título de Gran Impacto con Degradado */}
@@ -477,12 +478,13 @@ export const NosotrosPage: React.FC = () => {
          ========================================================================= */}
       <section className="py-20 lg:py-28 bg-[#071321] text-white border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mb-16 text-left reveal-up">
-            <div className="flex items-center gap-3 mb-3">
+          <div className="max-w-3xl mb-16 text-center md:text-left mx-auto md:mx-0 reveal-up">
+            <div className="flex items-center justify-center md:justify-start gap-3 mb-3">
               <span className="h-0.5 w-10 bg-[#DC2626]" />
               <span className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-slate-300">
                 Comparativa de Modelo
               </span>
+              <span className="h-0.5 w-10 bg-[#DC2626] md:hidden" />
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
               La Diferencia de Operar con un <span className="text-[#DC2626]">Socio Estratégico</span>

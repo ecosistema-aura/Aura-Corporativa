@@ -24,12 +24,13 @@ export const Hero: React.FC = () => {
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 w-full">
         <div className="max-w-2xl lg:max-w-3xl">
           
-          {/* Línea de acento sobria y corporativa (sin pastillas ni puntos pulsantes) */}
-          <div className="flex items-center gap-3 mb-6 reveal-up">
+          {/* Línea de acento sobria y corporativa (centrada con doble línea en responsive) */}
+          <div className="flex items-center justify-center sm:justify-start gap-3 mb-6 reveal-up">
             <span className="h-0.5 w-10 bg-[#DC2626]" />
-            <span className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-slate-300">
+            <span className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-slate-300 text-center sm:text-left">
               Gestión Humana & Tercerización Empresarial
             </span>
+            <span className="h-0.5 w-10 bg-[#DC2626] sm:hidden" />
           </div>
 
           {/* Título Principal Ejecutivo */}
@@ -62,15 +63,24 @@ export const Hero: React.FC = () => {
             </Link>
           </div>
 
-          {/* Barra de Especialidades (Limpia, elegante, tipográfica) */}
-          <div className="mt-12 pt-8 border-t border-white/20 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs sm:text-sm text-slate-300 font-medium tracking-wide reveal-up delay-4">
-            <span>Tercerización Operativa</span>
-            <span className="text-red-500 font-bold">•</span>
-            <span>Administración de Nóminas</span>
-            <span className="text-red-500 font-bold">•</span>
-            <span>Intermediación Laboral</span>
-            <span className="text-red-500 font-bold">•</span>
-            <span>Soporte B2B Continuo</span>
+          {/* Barra de Especialidades (Elegante y ordenada en responsive como grid simétrico, horizontal en desktop) */}
+          <div className="mt-12 pt-8 border-t border-white/20 grid grid-cols-1 min-[350px]:grid-cols-2 sm:flex sm:flex-wrap sm:items-center gap-x-4 sm:gap-x-6 gap-y-2.5 sm:gap-y-3 text-xs sm:text-sm text-slate-300 font-medium tracking-wide reveal-up delay-4">
+            <div className="flex items-start sm:items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#DC2626] shrink-0 mt-1.5 sm:mt-0" />
+              <span className="leading-tight">Tercerización Operativa</span>
+            </div>
+            <div className="flex items-start sm:items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#DC2626] shrink-0 mt-1.5 sm:mt-0" />
+              <span className="leading-tight">Administración de Nóminas</span>
+            </div>
+            <div className="flex items-start sm:items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#DC2626] shrink-0 mt-1.5 sm:mt-0" />
+              <span className="leading-tight">Intermediación Laboral</span>
+            </div>
+            <div className="flex items-start sm:items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#DC2626] shrink-0 mt-1.5 sm:mt-0" />
+              <span className="leading-tight">Soporte B2B Continuo</span>
+            </div>
           </div>
 
         </div>

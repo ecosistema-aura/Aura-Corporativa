@@ -103,12 +103,13 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
          ========================================================================= */}
       <section className="py-20 lg:py-24 bg-white border-b border-slate-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mb-16 text-left reveal-up">
-            <div className="flex items-center gap-3 mb-4">
+          <div className="max-w-3xl mb-16 text-center md:text-left mx-auto md:mx-0 reveal-up">
+            <div className="flex items-center justify-center md:justify-start gap-3 mb-4">
               <span className="h-0.5 w-10 bg-[#DC2626]" />
               <span className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-slate-500">
                 Solidez Empresarial
               </span>
+              <span className="h-0.5 w-10 bg-[#DC2626] md:hidden" />
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
               Soluciones integrales en Gestión Humana, Tercerización y Planillas en el Perú
@@ -179,12 +180,13 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Encabezado Principal */}
-          <div className="max-w-3xl mb-12 sm:mb-16 text-left reveal-up">
-            <div className="flex items-center gap-3 mb-3">
+          <div className="max-w-3xl mb-12 sm:mb-16 text-center md:text-left mx-auto md:mx-0 reveal-up">
+            <div className="flex items-center justify-center md:justify-start gap-3 mb-3">
               <span className="h-0.5 w-10 bg-[#DC2626]" />
               <span className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-slate-300">
                 Líneas de Especialidad
               </span>
+              <span className="h-0.5 w-10 bg-[#DC2626] md:hidden" />
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
               Servicios Diseñados para Impulsar su <span className="text-[#DC2626]">Rentabilidad</span>
@@ -254,11 +256,11 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
       </section>
 
       {/* =========================================================================
-          4. SECTORES PRODUCTIVOS ATENDIDOS (EXPERIENCIA SECTORIAL CON BORDES RECTOS)
+          4. SECTORES PRODUCTIVOS ATENDIDOS (CARDS HORIZONTALES AMPLIOS)
          ========================================================================= */}
       <section className="py-20 lg:py-24 bg-white border-b border-slate-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 reveal-up">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+          <div className="text-center mb-14 reveal-up">
             <div className="flex items-center justify-center gap-3 mb-3">
               <span className="h-0.5 w-10 bg-[#DC2626]" />
               <span className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-slate-500">
@@ -274,29 +276,44 @@ export const LandingPage: React.FC<LandingPageProps> = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="flex flex-col gap-5">
             {sectors.map((sec, i) => {
               const SecIcon = sec.icon;
               return (
                 <div
                   key={i}
-                  className="p-6 bg-slate-50/80 border border-slate-200 hover:border-slate-300 hover:bg-white transition-all text-left flex flex-col justify-between"
+                  className="w-full p-6 sm:p-8 bg-slate-50/80 border border-slate-200 border-l-4 border-l-[#DC2626] flex flex-col lg:flex-row lg:items-center justify-between gap-6 text-left reveal-up"
                 >
-                  <div>
-                    <div className="w-12 h-12 bg-white border border-slate-200 text-[#071321] flex items-center justify-center mb-4 shadow-xs">
-                      <SecIcon size={22} className="text-[#DC2626]" />
+                  {/* Bloque Izquierdo: Ícono + Título + Descripción */}
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 lg:gap-6 flex-1">
+                    <div className="w-14 h-14 bg-white border border-slate-200 text-[#071321] flex items-center justify-center shrink-0 shadow-xs">
+                      <SecIcon size={26} className="text-[#DC2626]" />
                     </div>
-                    <h3 className="text-lg font-bold text-slate-900 mb-2">
-                      {sec.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal mb-4">
-                      {sec.desc}
-                    </p>
-                    <div className="flex flex-wrap gap-1.5 pt-3 border-t border-slate-200/80">
+                    <div>
+                      <div className="flex items-center gap-2.5 mb-1">
+                        <span className="text-xs font-black tracking-widest text-[#DC2626]">
+                          0{i + 1}
+                        </span>
+                        <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">
+                          {sec.title}
+                        </h3>
+                      </div>
+                      <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal max-w-2xl">
+                        {sec.desc}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Bloque Derecho: Perfiles Operativos */}
+                  <div className="lg:w-96 shrink-0 pt-4 lg:pt-0 lg:pl-6 border-t lg:border-t-0 lg:border-l border-slate-200">
+                    <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2.5">
+                      Perfiles Clave
+                    </span>
+                    <div className="flex flex-wrap gap-2">
                       {sec.roles.map((role, rIdx) => (
                         <span
                           key={rIdx}
-                          className="px-2 py-0.5 text-[11px] font-medium bg-slate-200/70 text-slate-700 border border-slate-300/60"
+                          className="px-2.5 py-1 text-xs font-medium bg-white text-slate-700 border border-slate-200"
                         >
                           {role}
                         </span>
